@@ -14,12 +14,17 @@ const Piano = () => {
     const [theme, setTheme] = useState('sharky');
 
     // Array of active keys, used in key component props to change image & other styling
-    const [activeKeys, updateActiveKeys] = useReducer((currentKeys, { operation, newKey }) => {
+    const [activeKeys, updateActiveKeys] = useReducer((currentKeys, action) => {
+        const {
+            operation,
+            note,
+        } = action;
+
         switch (operation) {
             case 'add':
-                return [...currentKeys, newKey];
+                return [...currentKeys, note];
             case 'remove':
-                return currentKeys.filter((_, index) => index !== newKey);
+                return currentKeys.filter((el) => el !== note);
             default:
                 return currentKeys;
         }
@@ -46,7 +51,10 @@ const Piano = () => {
 
                             // Add key to activeKeys
                             if (activeKeyIndex === -1)
-                                updateActiveKeys('add', note);
+                                updateActiveKeys({
+                                    operation: 'add',
+                                    note,
+                                });
     
                             // TODO: Start playing note
                             break;
@@ -56,7 +64,10 @@ const Piano = () => {
 
                             // Remove key from activeKeys
                             if (activeKeyIndex !== -1)
-                                updateActiveKeys('remove', note);
+                                updateActiveKeys({
+                                    operation: 'remove',
+                                    note,
+                                });
     
                             // TODO: Stop playing note
                             break;
