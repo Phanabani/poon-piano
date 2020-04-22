@@ -1,6 +1,4 @@
 .key {
-    position: relative;
-    width: calc(100% / 7);
     z-index: 1;
     cursor: pointer;
 }
@@ -12,10 +10,4 @@
 
 .keyActive {
     /* Do some fancy animation here :) */
-}
-
-@media (min-width: 1400px) {
-    .key {
-        width: calc(100% / 14);
-    }
 }

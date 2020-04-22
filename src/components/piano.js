@@ -33,6 +33,16 @@ const Piano = () => {
     // Determines whether touch or mouse event handlers should be added to keys
     const [touchEvents, setTouchEvents] = useState(false);
 
+    const getSize = () => (
+        {
+            width: window.innerWidth,
+            height: window.innerHeight,
+        }
+    );
+
+    // Need to know window size for key styling
+    const [windowSize, setWindowSize] = useState(getSize);
+
     // Hook to add key event listeners to window
     useEffect(() => {
         const keyEventHandler = (event) => {
@@ -80,12 +90,18 @@ const Piano = () => {
             }
         };
 
+        const onResizeHandler = () => {
+            setWindowSize(getSize());
+        };
+
         window.addEventListener('keydown', keyEventHandler);
         window.addEventListener('keyup', keyEventHandler);
+        window.addEventListener('resize', onResizeHandler);
 
         return () => {
             window.removeEventListener('keydown', keyEventHandler);
             window.removeEventListener('keyup', keyEventHandler);
+            window.removeEventListener('resize', onResizeHandler);
         };
     });
 
@@ -135,6 +151,7 @@ const Piano = () => {
                 active={activeKeys.indexOf(note) !== -1}
                 mouseTouchEventHandler={mouseTouchEventHandler}
                 touchEvents={touchEvents}
+                desktopMode={windowSize.width >= 1400}
             />
         );
     };

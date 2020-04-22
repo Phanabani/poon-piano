@@ -15,6 +15,7 @@ const Key = (props) => {
         active,
         mouseTouchEventHandler,
         touchEvents,
+        desktopMode,
     } = props;
 
     /**
@@ -56,10 +57,13 @@ const Key = (props) => {
     };
 
     // Determine left position of sharp keys
-    const styleObj = {};
-    if (sharp) {
+    const keyWidth = desktopMode ? (100/24) : (100/12);
+    const styleObj = {
+        width: `${(sharp ? 1 : (12/7)) * keyWidth}%`,
+    };
 
-    }
+    if (sharp)
+        styleObj.left = `${getSharpKeyPosition(note) * keyWidth}%`;
 
     return (
         <div
