@@ -11,7 +11,8 @@ const Key = (props) => {
     const {
         theme,
         note,
-        sharp,
+        noteWithoutOctave,
+        accidental,
         active,
         mouseTouchEventHandler,
         touchEvents,
@@ -19,11 +20,11 @@ const Key = (props) => {
     } = props;
 
     /**
-     * Helps calculate the left attribute required on the sharp notes
+     * Returns the index of the key on the piano
      * @param {String} note
-     * @returns {Number} Index of provided sharp key in key map
+     * @returns {Number} Index of provided key in key map
      */
-    const getSharpKeyPosition = (note) => {
+    const getKeyPosition = (note) => {
         for (let i = 0; i < keyMap.length; i += 1) {
             if (note === keyMap[i].note)
                 return i;
@@ -44,11 +45,9 @@ const Key = (props) => {
         // TODO: Some sanity checking on imgArr or default styling?
         const imgArr = imageMap[theme];
 
-        // TODO: Might be worth adding note type of keyMap
-        const noteType = note.indexOf('#') !== -1 ? 'accidental' : 'natural';
         for (let i = 0; i < imgArr.length; i += 1) {
             const imgObj = imgArr[i];
-            if (noteType === imgObj.noteType && active === imgObj.active)
+            if (accidental === imgObj.accidental && active === imgObj.active)
                 return imgObj.image;
         }
 
@@ -56,18 +55,22 @@ const Key = (props) => {
         return null;
     };
 
-    // Determine left position of sharp keys
+    // Determine left position of accidental keys
     const keyWidth = desktopMode ? (100/24) : (100/12);
     const styleObj = {
-        width: `${(sharp ? 1 : (12/7)) * keyWidth}%`,
+        width: `${(accidental ? 1 : (12/7)) * keyWidth}%`,
     };
 
-    if (sharp)
-        styleObj.left = `${getSharpKeyPosition(note) * keyWidth}%`;
+    if (accidental) {
+        styleObj.left = `${getKeyPosition(note) * keyWidth}%`;
+        styleObj.marginLeft = `-${0.5 * keyWidth}%`;
+    } else if (['c', 'f'].indexOf(noteWithoutOctave) === -1) {
+        styleObj.marginLeft = `-${0.5 * keyWidth}%`;
+    }
 
     return (
         <div
-            className={`key${sharp ? ' sharp' : ''}`}
+            className={`key${accidental ? ' accidental' : ''}`}
             style={styleObj}
             onMouseDown={touchEvents ? null : mouseTouchEventHandler}
             onMouseUp={touchEvents ? null : mouseTouchEventHandler}
@@ -80,6 +83,7 @@ const Key = (props) => {
             <img
                 className="keyImg"
                 src={getKeyImage(theme, note, active)}
+                name={note}
             />
         </div>
     );

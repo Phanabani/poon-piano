@@ -106,6 +106,9 @@ const Piano = () => {
     });
 
     const mouseTouchEventHandler = (event) => {
+        const note = event.target.name;
+        const activeKeyIndex = activeKeys.indexOf(note);
+
         switch (event.type) {
             case 'mousedown':
             case 'mouseenter':
@@ -114,6 +117,13 @@ const Piano = () => {
                 {
                     // Adds keyActive class on key for styling/animation
                     event.target.classList.add('keyActive');
+
+                    // Add key to activeKeys
+                    if (activeKeyIndex === -1)
+                        updateActiveKeys({
+                            operation: 'add',
+                            note,
+                        });
 
                     // TODO: Start playing note
                 }
@@ -124,6 +134,13 @@ const Piano = () => {
             case 'onTouchEnd':
                 // Removes keyActive class on key for styling/animation
                 event.target.classList.remove('keyActive');
+
+                // Remove key from activeKeys
+                if (activeKeyIndex !== -1)
+                updateActiveKeys({
+                    operation: 'remove',
+                    note,
+                });
 
                 // TODO: Stop playing note
                 break;
@@ -139,7 +156,8 @@ const Piano = () => {
     const renderKey = (key) => {
         const {
             note,
-            sharp,
+            noteWithoutOctave,
+            accidental,
         } = key;
 
         return (
@@ -147,7 +165,8 @@ const Piano = () => {
                 key={note}
                 theme={theme}
                 note={note}
-                sharp={sharp}
+                noteWithoutOctave={noteWithoutOctave}
+                accidental={accidental}
                 active={activeKeys.indexOf(note) !== -1}
                 mouseTouchEventHandler={mouseTouchEventHandler}
                 touchEvents={touchEvents}

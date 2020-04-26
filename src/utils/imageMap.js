@@ -7,22 +7,22 @@ import sharkyAccidentalPressed from '../assets/sharky/images/key_black_pressed.s
 export default {
     'sharky': [
         {
-            noteType: 'natural',
+            accidental: false,
             active: false,
             image: sharkyNatural,
         },
         {
-            noteType: 'natural',
+            accidental: false,
             active: true,
             image: sharkyNaturalPressed,
         },
         {
-            noteType: 'accidental',
+            accidental: true,
             active: false,
             image: sharkyAccidental,
         },
         {
-            noteType: 'accidental',
+            accidental: true,
             active: true,
             image: sharkyAccidentalPressed,
         }

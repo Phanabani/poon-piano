@@ -3,8 +3,7 @@
     cursor: pointer;
 }
 
-.sharp {
-    position: absolute;
+.accidental {
     z-index: 2;
 }
 
