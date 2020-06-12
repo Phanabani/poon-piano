@@ -1,8 +1,8 @@
 import React from 'react';
 
 // Utilities
-import keyMap from '../utils/keyMap';
-import imageMap from '../utils/imageMap';
+import IMAGE_MAP from '../utils/imageMap';
+import PITCH_INDEXES from '../utils/pitchIndexes';
 
 // Styles
 import '../styles/key.css';
@@ -10,40 +10,23 @@ import '../styles/key.css';
 const Key = (props) => {
     const {
         theme,
-        note,
-        noteWithoutOctave,
-        accidental,
+        midiValue,
         active,
         mouseTouchEventHandler,
         touchEvents,
         desktopMode,
     } = props;
 
-    /**
-     * Returns the index of the key on the piano
-     * @param {String} note
-     * @returns {Number} Index of provided key in key map
-     */
-    const getKeyPosition = (note) => {
-        for (let i = 0; i < keyMap.length; i += 1) {
-            if (note === keyMap[i].note)
-                return i;
-        }
-
-        // If we get here, we've got bigger problems
-        return 0;
-    };
+    const keyPos = midiValue % 12;
+    const accidental = PITCH_INDEXES[keyPos].includes('#');
 
     /**
      * Retrieves correct image for <img> element in key
-     * @param {String} theme
-     * @param {String} note
-     * @param {Boolean} active
      * @returns {} An imported image to use for src attribute
      */
-    const getKeyImage = (theme, note, active) => {
+    const getKeyImage = () => {
         // TODO: Some sanity checking on imgArr or default styling?
-        const imgArr = imageMap[theme];
+        const imgArr = IMAGE_MAP[theme];
 
         for (let i = 0; i < imgArr.length; i += 1) {
             const imgObj = imgArr[i];
@@ -62,9 +45,9 @@ const Key = (props) => {
     };
 
     if (accidental) {
-        styleObj.left = `${getKeyPosition(note) * keyWidth}%`;
+        styleObj.left = `${keyPos * keyWidth}%`;
         styleObj.marginLeft = `-${0.5 * keyWidth}%`;
-    } else if (['c', 'f'].indexOf(noteWithoutOctave) === -1) {
+    } else if (![0, 1, 5, 6].includes(keyPos)) {
         styleObj.marginLeft = `-${0.5 * keyWidth}%`;
     }
 
@@ -82,8 +65,8 @@ const Key = (props) => {
         >
             <img
                 className="keyImg"
-                src={getKeyImage(theme, note, active)}
-                name={note}
+                src={getKeyImage()}
+                name={midiValue}
             />
         </div>
     );

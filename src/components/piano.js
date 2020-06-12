@@ -4,7 +4,7 @@ import React, { useState, useEffect, useReducer } from 'react';
 import Key from './key';
 
 // Utilities
-import keyMap from '../utils/keyMap';
+import KEYBOARD_BINDINGS from '../utils/keyboardBindings';
 
 // Styles
 import '../styles/piano.css';
@@ -17,14 +17,14 @@ const Piano = () => {
     const [activeKeys, updateActiveKeys] = useReducer((currentKeys, action) => {
         const {
             operation,
-            note,
+            midiValue,
         } = action;
 
         switch (operation) {
             case 'add':
-                return [...currentKeys, note];
+                return [...currentKeys, midiValue];
             case 'remove':
-                return currentKeys.filter((el) => el !== note);
+                return currentKeys.filter((el) => el !== midiValue);
             default:
                 return currentKeys;
         }
@@ -47,12 +47,15 @@ const Piano = () => {
     useEffect(() => {
         const keyEventHandler = (event) => {
             const keyPressed = event.key.toUpperCase();
-            for (let i = 0; i < keyMap.length; i += 1) {
-                const key = keyMap[i];
-                if (keyPressed === key.keyboardBinding) {
+            const keyboardBindings = Object.values(KEYBOARD_BINDINGS);
+
+            // Loop through possible valid keyboard bindings to check if key should trigger sound
+            for (let i = 0; i < keyboardBindings.length; i += 1) {
+                const keyboardBinding = keyboardBindings[i];
+                if (keyPressed === keyboardBinding) {
                     const targetEl = document.getElementById('piano').children[i];
-                    const note = key.note;
-                    const activeKeyIndex = activeKeys.indexOf(note);
+                    const midiValue = parseInt(Object.keys(KEYBOARD_BINDINGS).filter((value) => KEYBOARD_BINDINGS[value] === keyPressed), 10);
+                    const isActiveKey = activeKeys.includes(midiValue);
     
                     switch (event.type) {
                         case 'keydown':
@@ -60,10 +63,10 @@ const Piano = () => {
                             targetEl.classList.add('keyActive');
 
                             // Add key to activeKeys
-                            if (activeKeyIndex === -1)
+                            if (!isActiveKey)
                                 updateActiveKeys({
                                     operation: 'add',
-                                    note,
+                                    midiValue,
                                 });
     
                             // TODO: Start playing note
@@ -73,10 +76,10 @@ const Piano = () => {
                             targetEl.classList.remove('keyActive');
 
                             // Remove key from activeKeys
-                            if (activeKeyIndex !== -1)
+                            if (isActiveKey)
                                 updateActiveKeys({
                                     operation: 'remove',
-                                    note,
+                                    midiValue,
                                 });
     
                             // TODO: Stop playing note
@@ -106,9 +109,11 @@ const Piano = () => {
     });
 
     const mouseTouchEventHandler = (event) => {
-        const note = event.target.name;
-        const activeKeyIndex = activeKeys.indexOf(note);
+        const midiValue = parseInt(event.target.name, 10);
+        if (Number.isNaN(midiValue))
+            return;
 
+        const isActiveKey = activeKeys.includes(midiValue);
         switch (event.type) {
             case 'mousedown':
             case 'mouseenter':
@@ -119,10 +124,10 @@ const Piano = () => {
                     event.target.classList.add('keyActive');
 
                     // Add key to activeKeys
-                    if (activeKeyIndex === -1)
+                    if (!isActiveKey)
                         updateActiveKeys({
                             operation: 'add',
-                            note,
+                            midiValue,
                         });
 
                     // TODO: Start playing note
@@ -136,11 +141,11 @@ const Piano = () => {
                 event.target.classList.remove('keyActive');
 
                 // Remove key from activeKeys
-                if (activeKeyIndex !== -1)
-                updateActiveKeys({
-                    operation: 'remove',
-                    note,
-                });
+                if (isActiveKey)
+                    updateActiveKeys({
+                        operation: 'remove',
+                        midiValue,
+                    });
 
                 // TODO: Stop playing note
                 break;
@@ -154,20 +159,15 @@ const Piano = () => {
     };
 
     const renderKey = (key) => {
-        const {
-            note,
-            noteWithoutOctave,
-            accidental,
-        } = key;
+        // Object.keys is array of strings
+        const midiValue = parseInt(key, 10);
 
         return (
             <Key
-                key={note}
+                key={midiValue}
                 theme={theme}
-                note={note}
-                noteWithoutOctave={noteWithoutOctave}
-                accidental={accidental}
-                active={activeKeys.indexOf(note) !== -1}
+                midiValue={midiValue}
+                active={activeKeys.includes(midiValue)}
                 mouseTouchEventHandler={mouseTouchEventHandler}
                 touchEvents={touchEvents}
                 desktopMode={windowSize.width >= 1400}
@@ -181,7 +181,7 @@ const Piano = () => {
             className={`piano ${theme}`}
             onTouchStart={onTouchStart}
         >
-            {keyMap.map(renderKey)}
+            {Object.keys(KEYBOARD_BINDINGS).map(renderKey)}
         </div>
     );
 };
