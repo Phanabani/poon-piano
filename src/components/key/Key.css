@@ -1,0 +1,8 @@
+.key {
+  z-index: 0;
+  cursor: pointer;
+}
+
+.accidental {
+  z-index: 1;
+}
