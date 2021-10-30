@@ -1,7 +1,5 @@
 // REACT
 import React, {
-  MouseEvent,
-  TouchEvent,
   useCallback,
   useEffect,
   useReducer,
