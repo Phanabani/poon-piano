@@ -16,6 +16,7 @@ module.exports = {
     'react/require-default-props': 'off',
     'import/order': 'off',
     '@typescript-eslint/no-empty-function': 'off',
+    'no-buffer-constructor': 'off',
   },
   settings: {
     'import/resolver': {
