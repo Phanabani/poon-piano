@@ -7,9 +7,7 @@ import {
 
 const context = new AudioContext();
 
-export const loadSoundFromFile = (
-  file: string,
-): Promise<AudioBuffer> =>
+const loadSoundFromFile = (file: string): Promise<AudioBuffer> =>
   new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     xhr.open('GET', file, true);
@@ -32,27 +30,37 @@ export const loadSoundFromFile = (
     xhr.send();
   });
 
-export interface MidiValueToBuffer {
-  [midiValue: number]: AudioBuffer;
+const loadSoundsFromFiles = (
+  files: string[],
+): Promise<AudioBuffer[]> => {
+  const promiseArr: Promise<AudioBuffer>[] = [];
+  files.forEach((file) => {
+    promiseArr.push(loadSoundFromFile(file));
+  });
+  return Promise.all(promiseArr);
+};
+
+export interface MidiValueToBuffers {
+  [midiValue: number]: AudioBuffer[];
 }
 
 export const loadSoundsForTheme = async (
   theme: string,
-): Promise<MidiValueToBuffer> => {
-  const midiValueToUrl = THEME_TO_NOTE_FILES[theme];
-  const promiseArr: Promise<AudioBuffer>[] = [];
-  const midiValues = Object.keys(midiValueToUrl);
+): Promise<MidiValueToBuffers> => {
+  const midiValueToFiles = THEME_TO_NOTE_FILES[theme];
+  const promiseArr: Promise<AudioBuffer[]>[] = [];
+  const midiValues = Object.keys(midiValueToFiles);
   midiValues.forEach((midiValue) => {
     promiseArr.push(
-      loadSoundFromFile(midiValueToUrl[Number(midiValue)]),
+      loadSoundsFromFiles(midiValueToFiles[Number(midiValue)]),
     );
   });
 
   const audioBufferArray = await Promise.all(promiseArr);
-  return audioBufferArray.reduce<MidiValueToBuffer>(
-    (midiValueToBuffer, buffer, index) => {
-      midiValueToBuffer[Number(midiValues[index])] = buffer;
-      return midiValueToBuffer;
+  return audioBufferArray.reduce<MidiValueToBuffers>(
+    (midiValueToBuffers, buffer, index) => {
+      midiValueToBuffers[Number(midiValues[index])] = buffer;
+      return midiValueToBuffers;
     },
     {},
   );

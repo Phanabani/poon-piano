@@ -23,9 +23,13 @@ import 'components/piano/Piano.css';
 // Utility functions
 import {
   loadSoundsForTheme,
-  MidiValueToBuffer,
+  MidiValueToBuffers,
   playSound,
 } from 'utils';
+
+interface MidiValueToBufferIndex {
+  [midiValue: number]: number;
+}
 
 export const Piano: VoidFunctionComponent = () => {
   // HOOKS
@@ -56,8 +60,10 @@ export const Piano: VoidFunctionComponent = () => {
     [],
   );
   const [loadingSounds, setLoadingSounds] = useState(true);
-  const [midiValueToBuffer, setMidiValueToBuffer] =
-    useState<MidiValueToBuffer>({});
+  const [midiValueToBuffers, setMidiValueToBuffers] =
+    useState<MidiValueToBuffers>({});
+  const [midiValueToBufferIndex, setMidiValueToBufferIndex] =
+    useState<MidiValueToBufferIndex>({});
 
   // HANDLERS
   const handleKeyDown = useCallback(
@@ -70,10 +76,28 @@ export const Piano: VoidFunctionComponent = () => {
           operation: 'start',
           midiValue,
         });
-        playSound(midiValueToBuffer[midiValue]);
+
+        // Update the sample to be played the next time key/mouse/touch happens
+        const currentSelectedBuffer =
+          midiValueToBufferIndex[midiValue];
+        const nextMidiValueToBufferIndex = {
+          ...midiValueToBufferIndex,
+        };
+        nextMidiValueToBufferIndex[midiValue] += 1;
+        if (
+          nextMidiValueToBufferIndex[midiValue] >
+          midiValueToBuffers[midiValue].length - 1
+        ) {
+          nextMidiValueToBufferIndex[midiValue] = 0;
+        }
+
+        playSound(
+          midiValueToBuffers[midiValue][currentSelectedBuffer],
+        );
+        setMidiValueToBufferIndex(nextMidiValueToBufferIndex);
       }
     },
-    [midiValueToBuffer],
+    [midiValueToBuffers, midiValueToBufferIndex],
   );
 
   const handleKeyUp = useCallback((event: KeyboardEvent) => {
@@ -93,7 +117,20 @@ export const Piano: VoidFunctionComponent = () => {
       operation: 'start',
       midiValue,
     });
-    playSound(midiValueToBuffer[midiValue]);
+    const currentSelectedBuffer = midiValueToBufferIndex[midiValue];
+    const nextMidiValueToBufferIndex = {
+      ...midiValueToBufferIndex,
+    };
+    nextMidiValueToBufferIndex[midiValue] += 1;
+    if (
+      nextMidiValueToBufferIndex[midiValue] >
+      midiValueToBuffers[midiValue].length - 1
+    ) {
+      nextMidiValueToBufferIndex[midiValue] = 0;
+    }
+
+    playSound(midiValueToBuffers[midiValue][currentSelectedBuffer]);
+    setMidiValueToBufferIndex(nextMidiValueToBufferIndex);
   };
 
   const onNotePlayEnd = (midiValue: number) => {
@@ -116,8 +153,19 @@ export const Piano: VoidFunctionComponent = () => {
   }, [handleKeyDown, handleKeyUp]);
 
   useEffect(() => {
-    loadSoundsForTheme(theme).then((nextMidiValueToBuffer) => {
-      setMidiValueToBuffer(nextMidiValueToBuffer);
+    loadSoundsForTheme(theme).then((nextMidiValueToBuffers) => {
+      const defaultMidiValueToBufferIndex = Object.keys(
+        nextMidiValueToBuffers,
+      ).reduce<MidiValueToBufferIndex>(
+        (nextMidiValueToBufferIndex, midiValue) => {
+          nextMidiValueToBufferIndex[Number(midiValue)] = 0;
+          return nextMidiValueToBufferIndex;
+        },
+        {},
+      );
+
+      setMidiValueToBuffers(nextMidiValueToBuffers);
+      setMidiValueToBufferIndex(defaultMidiValueToBufferIndex);
       setLoadingSounds(false);
     });
   }, [theme]);

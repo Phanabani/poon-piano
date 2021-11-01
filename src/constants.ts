@@ -6,30 +6,61 @@ import sharkyAccidentalImage from 'assets/sharky/images/key_black.svg';
 import sharkyNaturalPressedImage from 'assets/sharky/images/key_white_pressed.svg';
 import sharkyAccidentalPressedImage from 'assets/sharky/images/key_black_pressed.svg';
 // Sounds
-import sharky60Sound from 'assets/sharky/sounds/60.mp3';
-import sharky61Sound from 'assets/sharky/sounds/61.mp3';
-import sharky62Sound from 'assets/sharky/sounds/62.mp3';
-import sharky63Sound from 'assets/sharky/sounds/63.mp3';
-import sharky64Sound from 'assets/sharky/sounds/64.mp3';
-import sharky65Sound from 'assets/sharky/sounds/65.mp3';
-import sharky66Sound from 'assets/sharky/sounds/66.mp3';
-import sharky67Sound from 'assets/sharky/sounds/67.mp3';
-import sharky68Sound from 'assets/sharky/sounds/68.mp3';
-import sharky69Sound from 'assets/sharky/sounds/69.mp3';
-import sharky70Sound from 'assets/sharky/sounds/70.mp3';
-import sharky71Sound from 'assets/sharky/sounds/71.mp3';
-import sharky72Sound from 'assets/sharky/sounds/72.mp3';
-import sharky73Sound from 'assets/sharky/sounds/73.mp3';
-import sharky74Sound from 'assets/sharky/sounds/74.mp3';
-import sharky75Sound from 'assets/sharky/sounds/75.mp3';
-import sharky76Sound from 'assets/sharky/sounds/76.mp3';
-import sharky77Sound from 'assets/sharky/sounds/77.mp3';
-import sharky78Sound from 'assets/sharky/sounds/78.mp3';
-import sharky79Sound from 'assets/sharky/sounds/79.mp3';
-import sharky80Sound from 'assets/sharky/sounds/80.mp3';
-import sharky81Sound from 'assets/sharky/sounds/81.mp3';
-import sharky82Sound from 'assets/sharky/sounds/82.mp3';
-import sharky83Sound from 'assets/sharky/sounds/83.mp3';
+// TODO: Add miscellaneous sounds (button to play random one?)
+import sharky60Sound1 from 'assets/sharky/sounds/60_0.ogg';
+import sharky61Sound1 from 'assets/sharky/sounds/61_0.ogg';
+import sharky62Sound4 from 'assets/sharky/sounds/62_3.ogg';
+import sharky63Sound1 from 'assets/sharky/sounds/63_0.ogg';
+import sharky63Sound2 from 'assets/sharky/sounds/63_1.ogg';
+import sharky63Sound3 from 'assets/sharky/sounds/63_2.ogg';
+import sharky64Sound2 from 'assets/sharky/sounds/64_1.ogg';
+import sharky64Sound8 from 'assets/sharky/sounds/64_7.ogg';
+import sharky64Sound9 from 'assets/sharky/sounds/64_8.ogg';
+import sharky65Sound5 from 'assets/sharky/sounds/65_4.ogg';
+import sharky65Sound6 from 'assets/sharky/sounds/65_5.ogg';
+import sharky66Sound2 from 'assets/sharky/sounds/66_1.ogg';
+import sharky66Sound3 from 'assets/sharky/sounds/66_2.ogg';
+import sharky66Sound4 from 'assets/sharky/sounds/66_3.ogg';
+import sharky66Sound5 from 'assets/sharky/sounds/66_4.ogg';
+import sharky66Sound12 from 'assets/sharky/sounds/66_11.ogg';
+import sharky66Sound14 from 'assets/sharky/sounds/66_13.ogg';
+import sharky67Sound2 from 'assets/sharky/sounds/67_1.ogg';
+import sharky68Sound6 from 'assets/sharky/sounds/68_5.ogg';
+import sharky68Sound8 from 'assets/sharky/sounds/68_7.ogg';
+import sharky69Sound3 from 'assets/sharky/sounds/69_2.ogg';
+import sharky69Sound5 from 'assets/sharky/sounds/69_4.ogg';
+import sharky69Sound7 from 'assets/sharky/sounds/69_6.ogg';
+import sharky69Sound8 from 'assets/sharky/sounds/69_7.ogg';
+import sharky69Sound9 from 'assets/sharky/sounds/69_8.ogg';
+import sharky69Sound10 from 'assets/sharky/sounds/69_9.ogg';
+import sharky69Sound11 from 'assets/sharky/sounds/69_10.ogg';
+import sharky69Sound12 from 'assets/sharky/sounds/69_11.ogg';
+import sharky69Sound13 from 'assets/sharky/sounds/69_12.ogg';
+import sharky69Sound14 from 'assets/sharky/sounds/69_13.ogg';
+import sharky69Sound15 from 'assets/sharky/sounds/69_14.ogg';
+import sharky69Sound17 from 'assets/sharky/sounds/69_16.ogg';
+import sharky69Sound19 from 'assets/sharky/sounds/69_18.ogg';
+import sharky69Sound20 from 'assets/sharky/sounds/69_19.ogg';
+import sharky70Sound2 from 'assets/sharky/sounds/70_1.ogg';
+import sharky71Sound1 from 'assets/sharky/sounds/Fall_0.ogg'; // TODO: Add 71
+import sharky72Sound2 from 'assets/sharky/sounds/72_1.ogg';
+import sharky73Sound1 from 'assets/sharky/sounds/73_0.ogg';
+import sharky73Sound3 from 'assets/sharky/sounds/73_2.ogg';
+import sharky73Sound4 from 'assets/sharky/sounds/73_3.ogg';
+import sharky74Sound1 from 'assets/sharky/sounds/74_0.ogg';
+import sharky74Sound2 from 'assets/sharky/sounds/74_1.ogg';
+import sharky74Sound4 from 'assets/sharky/sounds/74_3.ogg';
+import sharky75Sound1 from 'assets/sharky/sounds/75_0.ogg';
+import sharky75Sound3 from 'assets/sharky/sounds/75_2.ogg';
+import sharky75Sound6 from 'assets/sharky/sounds/75_5.ogg';
+import sharky76Sound3 from 'assets/sharky/sounds/76_2.ogg';
+import sharky77Sound3 from 'assets/sharky/sounds/77_2.ogg';
+import sharky78Sound1 from 'assets/sharky/sounds/Fall_1.ogg'; // TODO: Add 78
+import sharky79Sound1 from 'assets/sharky/sounds/Fall_2.ogg'; // TODO: Add 79
+import sharky80Sound1 from 'assets/sharky/sounds/Fall_3.ogg'; // TODO: Add 80
+import sharky81Sound1 from 'assets/sharky/sounds/Fall_4.ogg'; // TODO: Add 81
+import sharky82Sound1 from 'assets/sharky/sounds/Fall_6.ogg'; // TODO: Add 82
+import sharky83Sound1 from 'assets/sharky/sounds/Fall_7.ogg'; // TODO: Add 83
 
 export const KEY_BINDING_TO_MIDI_VALUE = new Map([
   ['Z', 60], // C4
@@ -112,37 +143,59 @@ export const THEME_TO_IMAGE_ARRAY: {
   },
 };
 
-export interface MidiValueToURL {
-  [midiValue: number]: string;
+export interface MidiValueToFiles {
+  [midiValue: number]: string[];
 }
 
 export const THEME_TO_NOTE_FILES: {
-  [theme: string]: MidiValueToURL;
+  [theme: string]: MidiValueToFiles;
 } = {
   sharky: {
-    60: sharky60Sound,
-    61: sharky61Sound,
-    62: sharky62Sound,
-    63: sharky63Sound,
-    64: sharky64Sound,
-    65: sharky65Sound,
-    66: sharky66Sound,
-    67: sharky67Sound,
-    68: sharky68Sound,
-    69: sharky69Sound,
-    70: sharky70Sound,
-    71: sharky71Sound,
-    72: sharky72Sound,
-    73: sharky73Sound,
-    74: sharky74Sound,
-    75: sharky75Sound,
-    76: sharky76Sound,
-    77: sharky77Sound,
-    78: sharky78Sound,
-    79: sharky79Sound,
-    80: sharky80Sound,
-    81: sharky81Sound,
-    82: sharky82Sound,
-    83: sharky83Sound,
+    60: [sharky60Sound1],
+    61: [sharky61Sound1],
+    62: [sharky62Sound4],
+    63: [sharky63Sound1, sharky63Sound2, sharky63Sound3],
+    64: [sharky64Sound2, sharky64Sound8, sharky64Sound9],
+    65: [sharky65Sound5, sharky65Sound6],
+    66: [
+      sharky66Sound2,
+      sharky66Sound3,
+      sharky66Sound4,
+      sharky66Sound5,
+      sharky66Sound12,
+      sharky66Sound14,
+    ],
+    67: [sharky67Sound2],
+    68: [sharky68Sound6, sharky68Sound8],
+    69: [
+      sharky69Sound3,
+      sharky69Sound5,
+      sharky69Sound7,
+      sharky69Sound8,
+      sharky69Sound9,
+      sharky69Sound10,
+      sharky69Sound11,
+      sharky69Sound12,
+      sharky69Sound13,
+      sharky69Sound14,
+      sharky69Sound15,
+      sharky69Sound17,
+      sharky69Sound19,
+      sharky69Sound20,
+    ],
+    70: [sharky70Sound2],
+    71: [sharky71Sound1],
+    72: [sharky72Sound2],
+    73: [sharky73Sound1, sharky73Sound3, sharky73Sound4],
+    74: [sharky74Sound1, sharky74Sound2, sharky74Sound4],
+    75: [sharky75Sound1, sharky75Sound3, sharky75Sound6],
+    76: [sharky76Sound3],
+    77: [sharky77Sound3],
+    78: [sharky78Sound1],
+    79: [sharky79Sound1],
+    80: [sharky80Sound1],
+    81: [sharky81Sound1],
+    82: [sharky82Sound1],
+    83: [sharky83Sound1],
   },
 };
