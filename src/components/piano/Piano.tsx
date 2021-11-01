@@ -1,7 +1,6 @@
 // REACT
 import React, {
   useCallback,
-  useContext,
   useEffect,
   useReducer,
   useState,
@@ -16,16 +15,12 @@ import {
   KEY_BINDING_TO_MIDI_VALUE,
   KEY_POSITION_TO_NOTE,
 } from '../../constants';
-// Context
-import { ThemeContext } from 'context';
+// Hooks
+import { useMidiValueToBuffers } from 'hooks';
 // Styles
 import 'components/piano/Piano.css';
 // Utility functions
-import {
-  loadSoundsForTheme,
-  MidiValueToBuffers,
-  playSound,
-} from 'utils';
+import { playSound } from 'utils';
 
 interface MidiValueToBufferIndex {
   [midiValue: number]: number;
@@ -33,7 +28,7 @@ interface MidiValueToBufferIndex {
 
 export const Piano: VoidFunctionComponent = () => {
   // HOOKS
-  const { theme } = useContext(ThemeContext);
+  const { midiValueToBuffers, loading } = useMidiValueToBuffers();
 
   // LOCAL STATE
   const [notesPlaying, setNotesPlaying] = useReducer(
@@ -59,9 +54,6 @@ export const Piano: VoidFunctionComponent = () => {
     },
     [],
   );
-  const [loadingSounds, setLoadingSounds] = useState(true);
-  const [midiValueToBuffers, setMidiValueToBuffers] =
-    useState<MidiValueToBuffers>({});
   const [midiValueToBufferIndex, setMidiValueToBufferIndex] =
     useState<MidiValueToBufferIndex>({});
 
@@ -153,24 +145,19 @@ export const Piano: VoidFunctionComponent = () => {
   }, [handleKeyDown, handleKeyUp]);
 
   useEffect(() => {
-    loadSoundsForTheme(theme).then((nextMidiValueToBuffers) => {
-      const defaultMidiValueToBufferIndex = Object.keys(
-        nextMidiValueToBuffers,
-      ).reduce<MidiValueToBufferIndex>(
-        (nextMidiValueToBufferIndex, midiValue) => {
-          nextMidiValueToBufferIndex[Number(midiValue)] = 0;
-          return nextMidiValueToBufferIndex;
-        },
-        {},
-      );
+    const defaultMidiValueToBufferIndex = Object.keys(
+      midiValueToBuffers,
+    ).reduce<MidiValueToBufferIndex>(
+      (nextMidiValueToBufferIndex, midiValue) => {
+        nextMidiValueToBufferIndex[Number(midiValue)] = 0;
+        return nextMidiValueToBufferIndex;
+      },
+      {},
+    );
+    setMidiValueToBufferIndex(defaultMidiValueToBufferIndex);
+  }, [midiValueToBuffers]);
 
-      setMidiValueToBuffers(nextMidiValueToBuffers);
-      setMidiValueToBufferIndex(defaultMidiValueToBufferIndex);
-      setLoadingSounds(false);
-    });
-  }, [theme]);
-
-  if (loadingSounds) {
+  if (loading) {
     return null;
   }
 

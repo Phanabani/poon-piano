@@ -3,6 +3,7 @@ import React, { useState, VoidFunctionComponent } from 'react';
 
 // LOCAL FILES
 // Components
+import { BonusButton } from 'components/bonusButton/BonusButton';
 import { Piano } from 'components/piano/Piano';
 // Constants
 import { THEME_TO_IMAGE_ARRAY } from '../../constants';
@@ -30,6 +31,7 @@ export const App: VoidFunctionComponent = () => {
         }}
       >
         <Piano />
+        <BonusButton />
       </div>
     </ThemeContext.Provider>
   );

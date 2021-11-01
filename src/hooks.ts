@@ -1,5 +1,11 @@
 // REACT
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+
+// LOCAL FILES
+// Context
+import { ThemeContext } from 'context';
+// Utility functions
+import { loadSoundsForTheme, MidiValueToBuffers } from 'utils';
 
 interface WindowSize {
   width: number;
@@ -94,4 +100,32 @@ export const useKeySizeAndMargin = (
   }, [keyPosition, isAccidentalNote, isDesktopMode]);
 
   return widthAndMargin;
+};
+
+interface MidiValueToBuffersState {
+  midiValueToBuffers: MidiValueToBuffers;
+  loading: boolean;
+}
+
+export const useMidiValueToBuffers = (): MidiValueToBuffersState => {
+  // HOOKS
+  const { theme } = useContext(ThemeContext);
+
+  // LOCAL STATE
+  const [state, setState] = useState<MidiValueToBuffersState>({
+    midiValueToBuffers: {},
+    loading: true,
+  });
+
+  // EFFECTS
+  useEffect(() => {
+    loadSoundsForTheme(theme).then((nextMidiValueToBuffers) => {
+      setState({
+        midiValueToBuffers: nextMidiValueToBuffers,
+        loading: false,
+      });
+    });
+  }, [theme]);
+
+  return state;
 };

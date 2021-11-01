@@ -5,7 +5,7 @@ import {
   THEME_TO_NOTE_FILES,
 } from './constants';
 
-const context = new AudioContext();
+const audioContext = new AudioContext();
 
 const loadSoundFromFile = (file: string): Promise<AudioBuffer> =>
   new Promise((resolve, reject) => {
@@ -14,7 +14,7 @@ const loadSoundFromFile = (file: string): Promise<AudioBuffer> =>
     xhr.responseType = 'arraybuffer';
 
     xhr.onload = () => {
-      context.decodeAudioData(
+      audioContext.decodeAudioData(
         xhr.response,
         (buffer) => {
           resolve(buffer);
@@ -67,9 +67,9 @@ export const loadSoundsForTheme = async (
 };
 
 export const playSound = (buffer: AudioBuffer): void => {
-  const source = context.createBufferSource();
+  const source = audioContext.createBufferSource();
   source.buffer = buffer;
-  source.connect(context.destination);
+  source.connect(audioContext.destination);
   source.start(0);
 };
 
