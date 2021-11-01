@@ -5,9 +5,10 @@ import {
   THEME_TO_NOTE_FILES,
 } from './constants';
 
+const context = new AudioContext();
+
 export const loadSoundFromFile = (
   file: string,
-  context: AudioContext,
 ): Promise<AudioBuffer> =>
   new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
@@ -37,14 +38,13 @@ export interface MidiValueToBuffer {
 
 export const loadSoundsForTheme = async (
   theme: string,
-  context: AudioContext,
 ): Promise<MidiValueToBuffer> => {
   const midiValueToUrl = THEME_TO_NOTE_FILES[theme];
   const promiseArr: Promise<AudioBuffer>[] = [];
   const midiValues = Object.keys(midiValueToUrl);
   midiValues.forEach((midiValue) => {
     promiseArr.push(
-      loadSoundFromFile(midiValueToUrl[Number(midiValue)], context),
+      loadSoundFromFile(midiValueToUrl[Number(midiValue)]),
     );
   });
 
@@ -58,17 +58,11 @@ export const loadSoundsForTheme = async (
   );
 };
 
-export const playSound = (
-  context: AudioContext,
-  buffer: AudioBuffer,
-): void => {
-  const gainNode = context.createGain();
+export const playSound = (buffer: AudioBuffer): void => {
   const source = context.createBufferSource();
   source.buffer = buffer;
-  source.connect(gainNode);
-  gainNode.connect(context.destination);
-  gainNode.gain.setValueAtTime(0.8, context.currentTime);
-  source.start(context.currentTime);
+  source.connect(context.destination);
+  source.start(0);
 };
 
 export const getKeyImage = (

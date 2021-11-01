@@ -27,8 +27,6 @@ import {
   playSound,
 } from 'utils';
 
-const audioContext = new AudioContext();
-
 export const Piano: VoidFunctionComponent = () => {
   // HOOKS
   const { theme } = useContext(ThemeContext);
@@ -72,7 +70,7 @@ export const Piano: VoidFunctionComponent = () => {
           operation: 'start',
           midiValue,
         });
-        playSound(audioContext, midiValueToBuffer[midiValue]);
+        playSound(midiValueToBuffer[midiValue]);
       }
     },
     [midiValueToBuffer],
@@ -95,7 +93,7 @@ export const Piano: VoidFunctionComponent = () => {
       operation: 'start',
       midiValue,
     });
-    playSound(audioContext, midiValueToBuffer[midiValue]);
+    playSound(midiValueToBuffer[midiValue]);
   };
 
   const onNotePlayEnd = (midiValue: number) => {
@@ -118,12 +116,10 @@ export const Piano: VoidFunctionComponent = () => {
   }, [handleKeyDown, handleKeyUp]);
 
   useEffect(() => {
-    loadSoundsForTheme(theme, audioContext).then(
-      (nextMidiValueToBuffer) => {
-        setMidiValueToBuffer(nextMidiValueToBuffer);
-        setLoadingSounds(false);
-      },
-    );
+    loadSoundsForTheme(theme).then((nextMidiValueToBuffer) => {
+      setMidiValueToBuffer(nextMidiValueToBuffer);
+      setLoadingSounds(false);
+    });
   }, [theme]);
 
   if (loadingSounds) {
