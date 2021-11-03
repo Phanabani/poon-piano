@@ -1,52 +1,65 @@
 // REACT
 import React, {
+  FC,
   useCallback,
   useEffect,
   useReducer,
   useState,
-  VoidFunctionComponent,
 } from 'react';
 
 // LOCAL FILES
 // Components
-import { KeyAccidental, KeyNatural } from 'components/key';
+import { Key } from 'components/key/Key';
 // Constants
-import {
-  KEY_BINDING_TO_MIDI_VALUE,
-  KEY_POSITION_TO_NOTE,
-} from '../../constants';
+import { KEY_BINDING_TO_NOTE, Note } from '../../constants';
+// Interfaces & Types
+import { KeyImage } from 'components/app/App';
 // Hooks
-import { useMidiValueToBuffers } from 'hooks';
+import { useDesktopMode } from 'hooks';
 // Styles
 import 'components/piano/Piano.css';
 // Utility functions
-import { playSound } from 'utils';
+import {
+  getKeyImage,
+  getKeyMarginLeft,
+  getKeyWidth,
+  NoteToBuffers,
+  playSound,
+} from 'utils/misc';
 
-interface MidiValueToBufferIndex {
-  [midiValue: number]: number;
+interface NoteToBufferIndex {
+  [note: string]: number;
 }
 
-export const Piano: VoidFunctionComponent = () => {
+interface PianoProps {
+  noteToBuffers: NoteToBuffers;
+  keyImages: KeyImage[];
+}
+
+export const Piano: FC<PianoProps> = ({
+  noteToBuffers,
+  keyImages,
+}) => {
   // HOOKS
-  const { midiValueToBuffers, loading } = useMidiValueToBuffers();
+  const isDesktopMode = useDesktopMode();
 
   // LOCAL STATE
   const [notesPlaying, setNotesPlaying] = useReducer(
     (
-      currentNotesPlaying: number[],
+      currentNotesPlaying: Note[],
       action: {
         operation: 'start' | 'end';
-        midiValue: number;
+        note: Note;
       },
     ) => {
-      const { operation, midiValue } = action;
+      const { operation, note } = action;
 
       switch (operation) {
         case 'start':
-          return [...new Set([...currentNotesPlaying, midiValue])];
+          return [...new Set([...currentNotesPlaying, note])];
         case 'end':
           return currentNotesPlaying.filter(
-            (note) => note !== midiValue,
+            (notePlaying) => notePlaying !== note,
           );
         default:
           return currentNotesPlaying;
@@ -54,87 +67,63 @@ export const Piano: VoidFunctionComponent = () => {
     },
     [],
   );
-  const [midiValueToBufferIndex, setMidiValueToBufferIndex] =
-    useState<MidiValueToBufferIndex>({});
+  const [noteToBufferIndex, setNoteToBufferIndex] =
+    useState<NoteToBufferIndex>({});
 
   // HANDLERS
-  const handleKeyDown = useCallback(
-    (event: KeyboardEvent) => {
-      const midiValue = KEY_BINDING_TO_MIDI_VALUE.get(
-        event.key.toUpperCase(),
-      );
-      if (!event.repeat && midiValue) {
-        setNotesPlaying({
-          operation: 'start',
-          midiValue,
-        });
+  const updateBufferIndexAndPlaySound = useCallback(
+    (note: Note) => {
+      setNotesPlaying({
+        operation: 'start',
+        note,
+      });
 
-        // Update the sample to be played the next time key/mouse/touch happens
-        const currentSelectedBuffer =
-          midiValueToBufferIndex[midiValue];
-        const nextMidiValueToBufferIndex = {
-          ...midiValueToBufferIndex,
-        };
-        nextMidiValueToBufferIndex[midiValue] += 1;
-        if (
-          nextMidiValueToBufferIndex[midiValue] >
-          midiValueToBuffers[midiValue].length - 1
-        ) {
-          nextMidiValueToBufferIndex[midiValue] = 0;
-        }
-
-        playSound(
-          midiValueToBuffers[midiValue][currentSelectedBuffer],
-        );
-        setMidiValueToBufferIndex(nextMidiValueToBufferIndex);
+      // Update the sample to be played the next time key/mouse/touch happens
+      const currentSelectedBuffer = noteToBufferIndex[note];
+      const nextNoteToBufferIndex = {
+        ...noteToBufferIndex,
+      };
+      nextNoteToBufferIndex[note] += 1;
+      if (
+        nextNoteToBufferIndex[note] >
+        noteToBuffers[note].length - 1
+      ) {
+        nextNoteToBufferIndex[note] = 0;
       }
+
+      playSound(noteToBuffers[note][currentSelectedBuffer]);
+      setNoteToBufferIndex(nextNoteToBufferIndex);
     },
-    [midiValueToBuffers, midiValueToBufferIndex],
+    [noteToBufferIndex, noteToBuffers],
   );
 
-  const handleKeyUp = useCallback((event: KeyboardEvent) => {
-    const midiValue = KEY_BINDING_TO_MIDI_VALUE.get(
-      event.key.toUpperCase(),
-    );
-    if (!event.repeat && midiValue) {
-      setNotesPlaying({
-        operation: 'end',
-        midiValue,
-      });
-    }
-  }, []);
-
-  const onNotePlayStart = (midiValue: number) => {
-    setNotesPlaying({
-      operation: 'start',
-      midiValue,
-    });
-    const currentSelectedBuffer = midiValueToBufferIndex[midiValue];
-    const nextMidiValueToBufferIndex = {
-      ...midiValueToBufferIndex,
-    };
-    nextMidiValueToBufferIndex[midiValue] += 1;
-    if (
-      nextMidiValueToBufferIndex[midiValue] >
-      midiValueToBuffers[midiValue].length - 1
-    ) {
-      nextMidiValueToBufferIndex[midiValue] = 0;
-    }
-
-    playSound(midiValueToBuffers[midiValue][currentSelectedBuffer]);
-    setMidiValueToBufferIndex(nextMidiValueToBufferIndex);
-  };
-
-  const onNotePlayEnd = (midiValue: number) => {
+  const onNotePlayEnd = (note: Note) => {
     setNotesPlaying({
       operation: 'end',
-      midiValue,
+      note,
     });
   };
 
   // EFFECTS
   // Listen for key events in window
   useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const note = KEY_BINDING_TO_NOTE.get(event.key.toUpperCase());
+      if (!event.repeat && note) {
+        updateBufferIndexAndPlaySound(note as Note);
+      }
+    };
+
+    const handleKeyUp = (event: KeyboardEvent) => {
+      const note = KEY_BINDING_TO_NOTE.get(event.key.toUpperCase());
+      if (!event.repeat && note) {
+        setNotesPlaying({
+          operation: 'end',
+          note: note as Note,
+        });
+      }
+    };
+
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
 
@@ -142,58 +131,59 @@ export const Piano: VoidFunctionComponent = () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [handleKeyDown, handleKeyUp]);
+  }, [updateBufferIndexAndPlaySound]);
 
+  // Defaults buffer index to 0 for all notes
   useEffect(() => {
-    const defaultMidiValueToBufferIndex = Object.keys(
-      midiValueToBuffers,
-    ).reduce<MidiValueToBufferIndex>(
-      (nextMidiValueToBufferIndex, midiValue) => {
-        nextMidiValueToBufferIndex[Number(midiValue)] = 0;
-        return nextMidiValueToBufferIndex;
-      },
-      {},
-    );
-    setMidiValueToBufferIndex(defaultMidiValueToBufferIndex);
-  }, [midiValueToBuffers]);
-
-  if (loading) {
-    return null;
-  }
+    const defaultNoteToBufferIndex = Object.keys(
+      noteToBuffers,
+    ).reduce<NoteToBufferIndex>((nextNoteToBufferIndex, note) => {
+      nextNoteToBufferIndex[note] = 0;
+      return nextNoteToBufferIndex;
+    }, {});
+    setNoteToBufferIndex(defaultNoteToBufferIndex);
+  }, [noteToBuffers]);
 
   return (
     <div className="piano">
-      {[...KEY_BINDING_TO_MIDI_VALUE.entries()].map((entry) => {
-        const [key, midiValue] = entry;
-        const keyPosition = midiValue % 12;
-        const isAccidentalNote =
-          KEY_POSITION_TO_NOTE[keyPosition].includes('#');
+      {[...KEY_BINDING_TO_NOTE.entries()].map((entry) => {
+        const key = entry[0];
+        const note = entry[1] as Note;
+        const isAccidentalNote = note.includes('sharp');
+        const isNotePlaying = notesPlaying.includes(note);
+        const width = getKeyWidth(isAccidentalNote, isDesktopMode);
+        const marginLeft = getKeyMarginLeft(note, isDesktopMode);
 
-        const KeyComponent = isAccidentalNote
-          ? KeyAccidental
-          : KeyNatural;
         return (
-          <KeyComponent
-            key={midiValue}
+          <Key
+            key={note}
             label={key}
-            position={keyPosition}
-            isPlaying={notesPlaying.includes(midiValue)}
+            isAccidental={isAccidentalNote}
             eventHandlers={{
               onMouseDown: () => {
-                onNotePlayStart(midiValue);
+                updateBufferIndexAndPlaySound(note);
               },
               onMouseUp: () => {
-                onNotePlayEnd(midiValue);
+                onNotePlayEnd(note);
               },
               onTouchStart: () => {
-                onNotePlayStart(midiValue);
+                updateBufferIndexAndPlaySound(note);
               },
               onMouseOut: () => {
-                onNotePlayEnd(midiValue);
+                onNotePlayEnd(note);
               },
               onTouchEnd: () => {
-                onNotePlayEnd(midiValue);
+                onNotePlayEnd(note);
               },
+            }}
+            image={getKeyImage(
+              keyImages,
+              isAccidentalNote,
+              isNotePlaying,
+            )}
+            style={{
+              width: `${width}%`,
+              marginLeft: `${marginLeft}%`,
             }}
           />
         );

@@ -1,9 +1,5 @@
 // REACT
-import React, {
-  useContext,
-  useState,
-  VoidFunctionComponent,
-} from 'react';
+import React, { FC, useContext, useState } from 'react';
 
 // LOCAL FILES
 // Context
@@ -11,30 +7,30 @@ import { ThemeContext } from 'context';
 // Styles
 import 'components/bonusButton/BonusButton.css';
 // Utility functions
-import { playSound } from 'utils';
-import { useMidiValueToBuffers } from 'hooks';
+import { NoteToBuffers, playSound } from 'utils/misc';
 
-export const BonusButton: VoidFunctionComponent = () => {
+interface BonusButtonProps {
+  noteToBuffers: NoteToBuffers;
+}
+
+export const BonusButton: FC<BonusButtonProps> = ({
+  noteToBuffers,
+}) => {
   // HOOKS
-  const { theme } = useContext(ThemeContext);
-  const { midiValueToBuffers, loading } = useMidiValueToBuffers();
+  const theme = useContext(ThemeContext);
 
   // LOCAL STATE
   const [bufferIndex, setBufferIndex] = useState(0);
 
   // HANDLERS
   const onClick = () => {
-    playSound(midiValueToBuffers[0][bufferIndex]);
+    playSound(noteToBuffers.other[bufferIndex]);
     let nextBufferIndex = bufferIndex + 1;
-    if (nextBufferIndex > midiValueToBuffers[0].length - 1) {
+    if (nextBufferIndex > noteToBuffers.other.length - 1) {
       nextBufferIndex = 0;
     }
     setBufferIndex(nextBufferIndex);
   };
-
-  if (loading) {
-    return null;
-  }
 
   // TODO: Colour scheme for button based on theme
   return (

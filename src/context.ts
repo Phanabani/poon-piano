@@ -1,10 +1,4 @@
 // REACT
-import { createContext, Dispatch, SetStateAction } from 'react';
+import { createContext } from 'react';
 
-export const ThemeContext = createContext<{
-  theme: string;
-  setTheme: Dispatch<SetStateAction<string>>;
-}>({
-  theme: 'sharky',
-  setTheme: () => {},
-});
+export const ThemeContext = createContext('sharky');

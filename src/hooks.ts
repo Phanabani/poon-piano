@@ -1,11 +1,5 @@
 // REACT
-import { useContext, useEffect, useState } from 'react';
-
-// LOCAL FILES
-// Context
-import { ThemeContext } from 'context';
-// Utility functions
-import { loadSoundsForTheme, MidiValueToBuffers } from 'utils';
+import { useEffect, useState } from 'react';
 
 interface WindowSize {
   width: number;
@@ -52,80 +46,4 @@ export const useDesktopMode = (): boolean => {
   }, [windowWidth]);
 
   return isDesktopMode;
-};
-
-interface KeySizeAndMargin {
-  width: number;
-  marginLeft: number;
-}
-
-export const useKeySizeAndMargin = (
-  keyPosition: number,
-  isAccidentalNote: boolean,
-): KeySizeAndMargin => {
-  // HOOKS
-  const isDesktopMode = useDesktopMode();
-
-  // LOCAL STATE
-  const [widthAndMargin, setWidthAndMargin] =
-    useState<KeySizeAndMargin>({
-      width: 0,
-      marginLeft: 0,
-    });
-
-  // EFFECTS
-  useEffect(() => {
-    // Using 99.99999 to avoid percentages adding up to more than 100
-    const defaultWidth = isDesktopMode
-      ? 99.99999 / 24
-      : 99.99999 / 12;
-    let width = defaultWidth;
-    let marginLeft = 0;
-    if (isAccidentalNote) {
-      marginLeft = -0.5 * defaultWidth;
-    } else {
-      // Non-accidental keys are wider
-      width *= 12 / 7;
-
-      // We need to move some non-accidental keys to the left as the accidental keys hover on top
-      if (![0, 1, 5, 6].includes(keyPosition)) {
-        marginLeft = -0.5 * defaultWidth;
-      }
-    }
-
-    setWidthAndMargin({
-      width,
-      marginLeft,
-    });
-  }, [keyPosition, isAccidentalNote, isDesktopMode]);
-
-  return widthAndMargin;
-};
-
-interface MidiValueToBuffersState {
-  midiValueToBuffers: MidiValueToBuffers;
-  loading: boolean;
-}
-
-export const useMidiValueToBuffers = (): MidiValueToBuffersState => {
-  // HOOKS
-  const { theme } = useContext(ThemeContext);
-
-  // LOCAL STATE
-  const [state, setState] = useState<MidiValueToBuffersState>({
-    midiValueToBuffers: {},
-    loading: true,
-  });
-
-  // EFFECTS
-  useEffect(() => {
-    loadSoundsForTheme(theme).then((nextMidiValueToBuffers) => {
-      setState({
-        midiValueToBuffers: nextMidiValueToBuffers,
-        loading: false,
-      });
-    });
-  }, [theme]);
-
-  return state;
 };
