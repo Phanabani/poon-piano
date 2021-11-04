@@ -2,7 +2,7 @@
 // Classes
 import { Sounds } from 'classes';
 // Interfaces & Types
-import { Note, NOTES, THEME_TO_VALID_INDICES } from '../constants';
+import { Note, NOTES } from '../constants';
 import { Module } from 'utils';
 
 export interface KeyImage {
@@ -66,7 +66,6 @@ export const processNoteModules = (
   theme: string,
   modules: Module[],
 ): NoteToNoteFiles => {
-  const validNoteIndices = THEME_TO_VALID_INDICES[theme];
   return modules.reduce<NoteToNoteFiles>((previousValue, module) => {
     const { default: path } = module;
     const filePathSplit = path.split('/');
@@ -74,12 +73,8 @@ export const processNoteModules = (
     const fileNameSplit = fileName.split('.');
     const noteIdSplit = fileNameSplit[0].split('_');
     const note = noteIdSplit[0] as Note;
-    const noteIndex = Number(noteIdSplit[1]);
 
-    if (
-      !NOTES.includes(note) ||
-      !validNoteIndices[note].includes(noteIndex)
-    ) {
+    if (!NOTES.includes(note)) {
       if (typeof previousValue.other === 'undefined') {
         previousValue.other = [];
       }
