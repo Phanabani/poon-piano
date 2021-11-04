@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 
 // LOCAL FILES
 // Components
-import { App } from 'components/app/App';
+import { App } from 'components';
 // Styles
 import 'index.css';
 

@@ -64,8 +64,11 @@ export const THEME_TO_VALID_INDICES: Record<
   },
 };
 
-// Using a map to preserve order of notes
-export const KEY_BINDING_TO_NOTE = new Map([
+/*
+  Using a map to preserve order of notes.
+  This makes it simple to loop through and render them in order.
+*/
+export const KEY_BINDING_TO_NOTE = new Map<string, Note>([
   ['Z', 'C4'],
   ['S', 'Csharp4'],
   ['X', 'D4'],

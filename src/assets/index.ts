@@ -1,5 +1,7 @@
 // @ts-nocheck
-import { importAll, Module } from 'utils/import';
+// LOCAL FILES
+// Utility functions
+import { importAll, Module } from 'utils';
 
 interface ThemeToModules {
   [theme: string]: Module[];

@@ -1,5 +1,6 @@
 // REACT
 import React, {
+  CSSProperties,
   FC,
   useCallback,
   useEffect,
@@ -9,35 +10,42 @@ import React, {
 
 // LOCAL FILES
 // Components
-import { Key } from 'components/key/Key';
+import { Key } from '.';
 // Constants
-import { KEY_BINDING_TO_NOTE, Note } from '../../constants';
-// Interfaces & Types
-import { KeyImage } from 'components/app/App';
+import { KEY_BINDING_TO_NOTE, Note } from '../constants';
 // Hooks
 import { useDesktopMode } from 'hooks';
-// Styles
-import 'components/piano/Piano.css';
 // Utility functions
 import {
   getKeyImage,
   getKeyMarginLeft,
   getKeyWidth,
-  NoteToBuffers,
-  playSound,
-} from 'utils/misc';
+  KeyImage,
+  NoteToSounds,
+} from 'utils';
 
-interface NoteToBufferIndex {
+const styles: { [key: string]: CSSProperties } = {
+  piano: {
+    width: '100%',
+    maxWidth: 1400,
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    flexWrap: 'wrap',
+  },
+};
+
+interface NoteToSoundIndex {
   [note: string]: number;
 }
 
 interface PianoProps {
-  noteToBuffers: NoteToBuffers;
+  noteToSounds: NoteToSounds;
   keyImages: KeyImage[];
 }
 
 export const Piano: FC<PianoProps> = ({
-  noteToBuffers,
+  noteToSounds,
   keyImages,
 }) => {
   // HOOKS
@@ -67,34 +75,35 @@ export const Piano: FC<PianoProps> = ({
     },
     [],
   );
-  const [noteToBufferIndex, setNoteToBufferIndex] =
-    useState<NoteToBufferIndex>({});
+  const [noteToSoundIndex, setNoteToSoundIndex] =
+    useState<NoteToSoundIndex>({});
 
   // HANDLERS
-  const updateBufferIndexAndPlaySound = useCallback(
+  const updateSoundIndexAndPlaySound = useCallback(
     (note: Note) => {
       setNotesPlaying({
         operation: 'start',
         note,
       });
 
+      // Play current selected sample
+      noteToSounds[note][noteToSoundIndex[note]].play();
+
       // Update the sample to be played the next time key/mouse/touch happens
-      const currentSelectedBuffer = noteToBufferIndex[note];
-      const nextNoteToBufferIndex = {
-        ...noteToBufferIndex,
+      const nextNoteToSoundIndex = {
+        ...noteToSoundIndex,
       };
-      nextNoteToBufferIndex[note] += 1;
+      nextNoteToSoundIndex[note] += 1;
       if (
-        nextNoteToBufferIndex[note] >
-        noteToBuffers[note].length - 1
+        nextNoteToSoundIndex[note] >
+        noteToSounds[note].length - 1
       ) {
-        nextNoteToBufferIndex[note] = 0;
+        nextNoteToSoundIndex[note] = 0;
       }
 
-      playSound(noteToBuffers[note][currentSelectedBuffer]);
-      setNoteToBufferIndex(nextNoteToBufferIndex);
+      setNoteToSoundIndex(nextNoteToSoundIndex);
     },
-    [noteToBufferIndex, noteToBuffers],
+    [noteToSoundIndex, noteToSounds],
   );
 
   const onNotePlayEnd = (note: Note) => {
@@ -110,7 +119,7 @@ export const Piano: FC<PianoProps> = ({
     const handleKeyDown = (event: KeyboardEvent) => {
       const note = KEY_BINDING_TO_NOTE.get(event.key.toUpperCase());
       if (!event.repeat && note) {
-        updateBufferIndexAndPlaySound(note as Note);
+        updateSoundIndexAndPlaySound(note as Note);
       }
     };
 
@@ -131,21 +140,21 @@ export const Piano: FC<PianoProps> = ({
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [updateBufferIndexAndPlaySound]);
+  }, [updateSoundIndexAndPlaySound]);
 
   // Defaults buffer index to 0 for all notes
   useEffect(() => {
-    const defaultNoteToBufferIndex = Object.keys(
-      noteToBuffers,
-    ).reduce<NoteToBufferIndex>((nextNoteToBufferIndex, note) => {
-      nextNoteToBufferIndex[note] = 0;
-      return nextNoteToBufferIndex;
+    const defaultNoteToSoundIndex = Object.keys(
+      noteToSounds,
+    ).reduce<NoteToSoundIndex>((nextnoteToSoundIndex, note) => {
+      nextnoteToSoundIndex[note] = 0;
+      return nextnoteToSoundIndex;
     }, {});
-    setNoteToBufferIndex(defaultNoteToBufferIndex);
-  }, [noteToBuffers]);
+    setNoteToSoundIndex(defaultNoteToSoundIndex);
+  }, [noteToSounds]);
 
   return (
-    <div className="piano">
+    <div style={styles.piano}>
       {[...KEY_BINDING_TO_NOTE.entries()].map((entry) => {
         const key = entry[0];
         const note = entry[1] as Note;
@@ -161,13 +170,13 @@ export const Piano: FC<PianoProps> = ({
             isAccidental={isAccidentalNote}
             eventHandlers={{
               onMouseDown: () => {
-                updateBufferIndexAndPlaySound(note);
+                updateSoundIndexAndPlaySound(note);
               },
               onMouseUp: () => {
                 onNotePlayEnd(note);
               },
               onTouchStart: () => {
-                updateBufferIndexAndPlaySound(note);
+                updateSoundIndexAndPlaySound(note);
               },
               onMouseOut: () => {
                 onNotePlayEnd(note);

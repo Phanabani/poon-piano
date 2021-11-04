@@ -1,5 +1,6 @@
 // REACT
 import React, {
+  CSSProperties,
   useEffect,
   useState,
   VoidFunctionComponent,
@@ -12,29 +13,30 @@ import {
   THEME_TO_NOTE_MODULES,
 } from 'assets';
 // Components
-import { BonusButton } from 'components/bonusButton/BonusButton';
-import { Piano } from 'components/piano/Piano';
+import { BonusButton, Piano } from '.';
 // Context
 import { ThemeContext } from 'context';
-// Styles
-import 'components/app/App.css';
 // Utility functions
 import {
+  NoteToSounds,
+  processFilesIntoSounds,
   processImageModules,
   processNoteModules,
-} from 'utils/import';
-import { loadSoundsForTheme, NoteToBuffers } from 'utils/misc';
+  ThemeImages,
+} from 'utils';
 
-export interface KeyImage {
-  accidental: boolean;
-  active: boolean;
-  image: string;
-}
-
-export interface ThemeImages {
-  background: string;
-  keys: KeyImage[];
-}
+const styles: { [key: string]: CSSProperties } = {
+  app: {
+    height: '100%',
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'center',
+    backgroundSize: 'cover',
+    display: 'flex',
+    flexDirection: 'column',
+    flexWrap: 'nowrap',
+    alignItems: 'center',
+  },
+};
 
 export const App: VoidFunctionComponent = () => {
   // LOCAL STATE
@@ -45,9 +47,7 @@ export const App: VoidFunctionComponent = () => {
     background: '',
     keys: [],
   });
-  const [noteToBuffers, setNoteToBuffers] = useState<NoteToBuffers>(
-    {},
-  );
+  const [noteToSounds, setNoteToSounds] = useState<NoteToSounds>({});
 
   // EFFECTS
   useEffect(() => {
@@ -60,14 +60,17 @@ export const App: VoidFunctionComponent = () => {
       THEME_TO_IMAGE_MODULES[theme],
     );
 
-    // Process note files into audio buffers
-    loadSoundsForTheme(noteToNoteFiles).then((nextNoteToBuffers) => {
-      setImages(imageFiles);
-      setNoteToBuffers(nextNoteToBuffers);
-      setLoading(false);
-    });
+    // Convert imported modules (audio files) into Sounds (class)
+    processFilesIntoSounds(noteToNoteFiles).then(
+      (nextNoteToSounds) => {
+        setImages(imageFiles);
+        setNoteToSounds(nextNoteToSounds);
+        setLoading(false);
+      },
+    );
   }, [theme]);
 
+  // CONDITIONAL RENDERING
   // TODO: Loading spinner?
   if (loading) {
     return null;
@@ -76,16 +79,13 @@ export const App: VoidFunctionComponent = () => {
   return (
     <ThemeContext.Provider value={theme}>
       <div
-        className="app"
         style={{
+          ...styles.app,
           backgroundImage: `url(${images.background})`,
         }}
       >
-        <Piano
-          noteToBuffers={noteToBuffers}
-          keyImages={images.keys}
-        />
-        <BonusButton noteToBuffers={noteToBuffers} />
+        <Piano noteToSounds={noteToSounds} keyImages={images.keys} />
+        <BonusButton noteToSounds={noteToSounds} />
       </div>
     </ThemeContext.Provider>
   );
