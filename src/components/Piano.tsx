@@ -5,7 +5,6 @@ import React, {
   useCallback,
   useEffect,
   useReducer,
-  useState,
 } from 'react';
 
 // LOCAL FILES
@@ -34,10 +33,6 @@ const styles: { [key: string]: CSSProperties } = {
     flexWrap: 'wrap',
   },
 };
-
-interface NoteToSoundIndex {
-  [note: string]: number;
-}
 
 interface PianoProps {
   noteToSounds: NoteToSounds;
@@ -75,8 +70,6 @@ export const Piano: FC<PianoProps> = ({
     },
     [],
   );
-  const [noteToSoundIndex, setNoteToSoundIndex] =
-    useState<NoteToSoundIndex>({});
 
   // HANDLERS
   const updateSoundIndexAndPlaySound = useCallback(
@@ -86,32 +79,22 @@ export const Piano: FC<PianoProps> = ({
         note,
       });
 
-      // Play current selected sample
-      noteToSounds[note][noteToSoundIndex[note]].play();
-
-      // Update the sample to be played the next time key/mouse/touch happens
-      const nextNoteToSoundIndex = {
-        ...noteToSoundIndex,
-      };
-      nextNoteToSoundIndex[note] += 1;
-      if (
-        nextNoteToSoundIndex[note] >
-        noteToSounds[note].length - 1
-      ) {
-        nextNoteToSoundIndex[note] = 0;
-      }
-
-      setNoteToSoundIndex(nextNoteToSoundIndex);
+      noteToSounds[note].play();
     },
-    [noteToSoundIndex, noteToSounds],
+    [noteToSounds],
   );
 
-  const onNotePlayEnd = (note: Note) => {
-    setNotesPlaying({
-      operation: 'end',
-      note,
-    });
-  };
+  const stopSound = useCallback(
+    (note: Note) => {
+      setNotesPlaying({
+        operation: 'end',
+        note,
+      });
+
+      noteToSounds[note].stop();
+    },
+    [noteToSounds],
+  );
 
   // EFFECTS
   // Listen for key events in window
@@ -126,10 +109,7 @@ export const Piano: FC<PianoProps> = ({
     const handleKeyUp = (event: KeyboardEvent) => {
       const note = KEY_BINDING_TO_NOTE.get(event.key.toUpperCase());
       if (!event.repeat && note) {
-        setNotesPlaying({
-          operation: 'end',
-          note: note as Note,
-        });
+        stopSound(note as Note);
       }
     };
 
@@ -140,18 +120,7 @@ export const Piano: FC<PianoProps> = ({
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [updateSoundIndexAndPlaySound]);
-
-  // Defaults buffer index to 0 for all notes
-  useEffect(() => {
-    const defaultNoteToSoundIndex = Object.keys(
-      noteToSounds,
-    ).reduce<NoteToSoundIndex>((nextnoteToSoundIndex, note) => {
-      nextnoteToSoundIndex[note] = 0;
-      return nextnoteToSoundIndex;
-    }, {});
-    setNoteToSoundIndex(defaultNoteToSoundIndex);
-  }, [noteToSounds]);
+  }, [stopSound, updateSoundIndexAndPlaySound]);
 
   return (
     <div style={styles.piano}>
@@ -173,16 +142,16 @@ export const Piano: FC<PianoProps> = ({
                 updateSoundIndexAndPlaySound(note);
               },
               onMouseUp: () => {
-                onNotePlayEnd(note);
+                stopSound(note);
               },
               onTouchStart: () => {
                 updateSoundIndexAndPlaySound(note);
               },
               onMouseOut: () => {
-                onNotePlayEnd(note);
+                stopSound(note);
               },
               onTouchEnd: () => {
-                onNotePlayEnd(note);
+                stopSound(note);
               },
             }}
             image={getKeyImage(

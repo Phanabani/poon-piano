@@ -1,12 +1,14 @@
-export class Sound {
+export class Sounds {
   context: AudioContext;
-  buffer: AudioBuffer;
+  buffers: AudioBuffer[];
+  bufferIndex: number;
   gainNode: GainNode;
   source: AudioBufferSourceNode;
 
-  constructor(context: AudioContext, buffer: AudioBuffer) {
+  constructor(context: AudioContext, buffers: AudioBuffer[]) {
     this.context = context;
-    this.buffer = buffer;
+    this.buffers = buffers;
+    this.bufferIndex = 0;
     this.gainNode = context.createGain();
     this.source = context.createBufferSource();
   }
@@ -14,25 +16,30 @@ export class Sound {
   init() {
     this.gainNode = this.context.createGain();
     this.source = this.context.createBufferSource();
-    this.source.buffer = this.buffer;
+    this.source.buffer = this.buffers[this.bufferIndex];
     this.source.connect(this.gainNode);
     this.gainNode.connect(this.context.destination);
   }
 
-  play() {
-    this.init();
-    const currentTime = this.context.currentTime;
-    this.source.start(currentTime);
+  play(stopPrevious = false) {
+    if (stopPrevious) {
+      this.stop();
+    }
 
-    // Fades sound out 80ms before it stops playing
-    this.gainNode.gain.exponentialRampToValueAtTime(
-      0.001,
-      currentTime + this.buffer.duration - 0.08,
-    );
+    // Increment index so next sample is played
+    let nextBufferIndex = this.bufferIndex + 1;
+    if (nextBufferIndex > this.buffers.length - 1) {
+      nextBufferIndex = 0;
+    }
+    this.bufferIndex = nextBufferIndex;
+
+    this.init();
+    this.source.start(this.context.currentTime);
   }
 
   stop() {
     try {
+      // Fades note out in 80ms
       this.gainNode.gain.exponentialRampToValueAtTime(
         0.001,
         this.context.currentTime + 0.08,

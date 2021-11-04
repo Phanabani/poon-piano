@@ -1,6 +1,6 @@
 // LOCAL FILES
 // Classes
-import { Sound } from 'classes';
+import { Sounds } from 'classes';
 // Interfaces & Types
 import { Note, NOTES, THEME_TO_VALID_INDICES } from '../constants';
 import { Module } from 'utils';
@@ -134,7 +134,7 @@ const getBuffersFromFiles = (
 };
 
 export interface NoteToSounds {
-  [note: string]: Sound[];
+  [note: string]: Sounds;
 }
 
 export const processFilesIntoSounds = async (
@@ -149,9 +149,7 @@ export const processFilesIntoSounds = async (
   const audioBufferArray = await Promise.all(promiseArr);
   return audioBufferArray.reduce<NoteToSounds>(
     (noteToSounds, buffers, index) => {
-      noteToSounds[notes[index]] = buffers.map(
-        (buffer) => new Sound(audioContext, buffer),
-      );
+      noteToSounds[notes[index]] = new Sounds(audioContext, buffers);
       return noteToSounds;
     },
     {},

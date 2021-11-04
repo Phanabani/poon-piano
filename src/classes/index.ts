@@ -1,1 +1,1 @@
-export * from 'classes/sound';
+export * from 'classes/sounds';
