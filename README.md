@@ -5,6 +5,6 @@ A musical app inspired by Yogscast Ben's many deaths.
 Coming soon
 
 ## Contributors
-[Phanabani](https://github.com/Phanabani) - Sounds + Code
-[nlanky](https://github.com/nlanky) - Code
+[Phanabani](https://github.com/Phanabani) - Sounds + Code  
+[nlanky](https://github.com/nlanky) - Code  
 [AwesomeAartvark](https://www.deviantart.com/awesomeaartvark) - Artwork
