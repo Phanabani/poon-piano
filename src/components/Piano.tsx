@@ -16,8 +16,12 @@ import {
   MAX_PIANO_WIDTH,
   Note,
 } from '../constants';
+// Hooks
+import { useScreenSize } from 'hooks';
 // Utility functions
 import { getKeyImage, KeyImage, NoteToSounds } from 'utils';
+
+const keyBindingNotePairs = [...KEY_BINDING_TO_NOTE.entries()];
 
 const styles: { [key: string]: CSSProperties } = {
   piano: {
@@ -39,6 +43,9 @@ export const Piano: FC<PianoProps> = ({
   noteToSounds,
   keyImages,
 }) => {
+  // HOOKS
+  const { width, height } = useScreenSize();
+
   // LOCAL STATE
   const [notesPlaying, setNotesPlaying] = useReducer(
     (
@@ -63,6 +70,15 @@ export const Piano: FC<PianoProps> = ({
     },
     [],
   );
+
+  // DERIVED VARIABLES
+  const keysToRender =
+    width > height
+      ? keyBindingNotePairs
+      : [
+          ...keyBindingNotePairs.slice(12),
+          ...keyBindingNotePairs.slice(0, 12),
+        ];
 
   // HANDLERS
   const updateSoundIndexAndPlaySound = useCallback(
@@ -117,7 +133,7 @@ export const Piano: FC<PianoProps> = ({
 
   return (
     <div style={styles.piano}>
-      {[...KEY_BINDING_TO_NOTE.entries()].map((entry) => {
+      {keysToRender.map((entry) => {
         const key = entry[0];
         const note = entry[1] as Note;
         const isAccidentalNote = note.includes('sharp');
