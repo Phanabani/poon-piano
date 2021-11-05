@@ -11,22 +11,18 @@ import React, {
 // Components
 import { Key } from '.';
 // Constants
-import { KEY_BINDING_TO_NOTE, Note } from '../constants';
-// Hooks
-import { useDesktopMode } from 'hooks';
-// Utility functions
 import {
-  getKeyImage,
-  getKeyMarginLeft,
-  getKeyWidth,
-  KeyImage,
-  NoteToSounds,
-} from 'utils';
+  KEY_BINDING_TO_NOTE,
+  MAX_PIANO_WIDTH,
+  Note,
+} from '../constants';
+// Utility functions
+import { getKeyImage, KeyImage, NoteToSounds } from 'utils';
 
 const styles: { [key: string]: CSSProperties } = {
   piano: {
     width: '100%',
-    maxWidth: 1400,
+    maxWidth: MAX_PIANO_WIDTH,
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'flex-start',
@@ -43,9 +39,6 @@ export const Piano: FC<PianoProps> = ({
   noteToSounds,
   keyImages,
 }) => {
-  // HOOKS
-  const isDesktopMode = useDesktopMode();
-
   // LOCAL STATE
   const [notesPlaying, setNotesPlaying] = useReducer(
     (
@@ -129,14 +122,13 @@ export const Piano: FC<PianoProps> = ({
         const note = entry[1] as Note;
         const isAccidentalNote = note.includes('sharp');
         const isNotePlaying = notesPlaying.includes(note);
-        const width = getKeyWidth(isAccidentalNote, isDesktopMode);
-        const marginLeft = getKeyMarginLeft(note, isDesktopMode);
 
         return (
           <Key
             key={note}
             label={key}
-            isAccidental={isAccidentalNote}
+            note={note}
+            isAccidental={note.includes('sharp')}
             eventHandlers={{
               onMouseDown: () => {
                 updateSoundIndexAndPlaySound(note);
@@ -159,10 +151,6 @@ export const Piano: FC<PianoProps> = ({
               isAccidentalNote,
               isNotePlaying,
             )}
-            style={{
-              width: `${width}%`,
-              marginLeft: `${marginLeft}%`,
-            }}
           />
         );
       })}

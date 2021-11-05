@@ -1,6 +1,12 @@
 // REACT
 import React, { CSSProperties, FC } from 'react';
 
+// LOCAL FILES
+// Interfaces & Types
+import { Note } from '../constants';
+// Hooks
+import { useKeyMarginLeft, useKeyWidth } from 'hooks';
+
 const styles: { [key: string]: CSSProperties } = {
   key: {
     cursor: 'pointer',
@@ -21,16 +27,19 @@ const styles: { [key: string]: CSSProperties } = {
     userSelect: 'none',
     MozUserSelect: 'none',
     WebkitUserSelect: 'none',
+    WebkitTouchCallout: 'none',
   },
   image: {
     userSelect: 'none',
     MozUserSelect: 'none',
     WebkitUserSelect: 'none',
+    WebkitTouchCallout: 'none',
   },
 };
 
 export interface KeyProps {
   label: string;
+  note: Note;
   isAccidental: boolean;
   eventHandlers: {
     onMouseDown: () => void;
@@ -40,20 +49,24 @@ export interface KeyProps {
     onTouchEnd: () => void;
   };
   image: string;
-  style: CSSProperties;
 }
 
 export const Key: FC<KeyProps> = ({
   label,
+  note,
   isAccidental,
   eventHandlers,
   image,
-  style,
 }) => {
+  // HOOKS
+  const width = useKeyWidth(note);
+  const marginLeft = useKeyMarginLeft(note);
+
   // DERIVED VARIABLES
   let combinedStyles: CSSProperties = {
     ...styles.key,
-    ...style,
+    width,
+    marginLeft,
   };
 
   if (isAccidental) {
@@ -72,7 +85,14 @@ export const Key: FC<KeyProps> = ({
       }}
       style={combinedStyles}
     >
-      <img alt="Piano key" src={image} style={styles.image} />
+      <img
+        alt="Piano key"
+        onContextMenu={(event) => {
+          event.preventDefault();
+        }}
+        src={image}
+        style={styles.image}
+      />
       <span style={styles.label}>{label}</span>
     </div>
   );
