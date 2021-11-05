@@ -11,6 +11,7 @@ const styles: { [key: string]: CSSProperties } = {
   key: {
     cursor: 'pointer',
     position: 'relative',
+    WebkitTapHighlightColor: 'transparent',
   },
   accidental: {
     zIndex: 1,
