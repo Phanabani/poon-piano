@@ -7,4 +7,4 @@ Coming soon
 ## Contributors
 [Phanabani](https://github.com/Phanabani) - Sounds + Code  
 [nlanky](https://github.com/nlanky) - Code  
-[AwesomeAartvark](https://www.deviantart.com/awesomeaartvark) - Artwork
+[AwesomeAartvark](https://www.instagram.com/awesomeaartvark) - Artwork
