@@ -1,24 +1,30 @@
 // REACT
 import { useEffect, useState } from 'react';
 
-interface WindowSize {
+// LOCAL FILES
+// Constants
+import { Note, NOTES } from './constants';
+// Utility functions
+import { getBaseKeyWidth } from 'utils';
+
+interface ScreenSize {
   width: number;
   height: number;
 }
 
-export const useWindowSize = (): WindowSize => {
+export const useScreenSize = () => {
   // LOCAL STATE
-  const [windowSize, setWindowSize] = useState({
-    width: 0,
-    height: 0,
+  const [screenSize, setScreenSize] = useState<ScreenSize>({
+    width: window.screen.availWidth,
+    height: window.screen.availHeight,
   });
 
   // EFFECTS
   useEffect(() => {
     const handleResize = () => {
-      setWindowSize({
-        width: window.innerWidth,
-        height: window.innerHeight,
+      setScreenSize({
+        width: window.screen.availWidth,
+        height: window.screen.availHeight,
       });
     };
 
@@ -30,20 +36,38 @@ export const useWindowSize = (): WindowSize => {
     };
   }, []);
 
-  return windowSize;
+  return screenSize;
 };
 
-export const useDesktopMode = (): boolean => {
+export const useKeyWidth = (note: Note): string => {
   // HOOKS
-  const { width: windowWidth } = useWindowSize();
+  const { width, height } = useScreenSize();
 
-  // LOCAL STATE
-  const [isDesktopMode, setDesktopMode] = useState(false);
+  const baseKeyWidth = getBaseKeyWidth(width > height);
+  return note.includes('sharp')
+    ? `${baseKeyWidth}%`
+    : `${(baseKeyWidth * 12) / 7}%`;
+};
 
-  // EFFECTS
-  useEffect(() => {
-    setDesktopMode(windowWidth >= 1400);
-  }, [windowWidth]);
+export const useKeyMarginLeft = (note: Note): string => {
+  // HOOKS
+  const { width, height } = useScreenSize();
 
-  return isDesktopMode;
+  const baseKeyWidth = getBaseKeyWidth(width > height);
+
+  let marginLeft = 0;
+  if (note.includes('sharp')) {
+    marginLeft = -0.5 * baseKeyWidth;
+  } else {
+    // We need to move some non-accidental keys to the left as the accidental keys hover on top
+    const previousNote =
+      NOTES[
+        NOTES.findIndex((noteIteration) => noteIteration === note) - 1
+      ];
+    if (previousNote?.includes('sharp')) {
+      marginLeft = -0.5 * baseKeyWidth;
+    }
+  }
+
+  return `${marginLeft}%`;
 };

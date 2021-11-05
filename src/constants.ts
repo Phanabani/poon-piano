@@ -57,3 +57,5 @@ export const KEY_BINDING_TO_NOTE = new Map<string, Note>([
   ['7', 'Asharp5'],
   ['U', 'B5'],
 ]);
+
+export const MAX_PIANO_WIDTH = 1280;
