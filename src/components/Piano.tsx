@@ -109,14 +109,14 @@ export const Piano: FC<PianoProps> = ({
     const handleKeyDown = (event: KeyboardEvent) => {
       const note = KEY_BINDING_TO_NOTE.get(event.key.toUpperCase());
       if (!event.repeat && note) {
-        updateSoundIndexAndPlaySound(note as Note);
+        updateSoundIndexAndPlaySound(note);
       }
     };
 
     const handleKeyUp = (event: KeyboardEvent) => {
       const note = KEY_BINDING_TO_NOTE.get(event.key.toUpperCase());
       if (!event.repeat && note) {
-        stopSound(note as Note);
+        stopSound(note);
       }
     };
 
@@ -138,7 +138,7 @@ export const Piano: FC<PianoProps> = ({
     >
       {keysToRender.map((entry) => {
         const key = entry[0];
-        const note = entry[1] as Note;
+        const note = entry[1];
         const isAccidentalNote = note.includes('sharp');
         const isNotePlaying = notesPlaying.includes(note);
 
