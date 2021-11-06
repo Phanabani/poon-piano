@@ -35,6 +35,7 @@ const styles: { [key: string]: CSSProperties } = {
     MozUserSelect: 'none',
     WebkitUserSelect: 'none',
     WebkitTouchCallout: 'none',
+    pointerEvents: 'none',
   },
 };
 
@@ -86,14 +87,7 @@ export const Key: FC<KeyProps> = ({
       }}
       style={combinedStyles}
     >
-      <img
-        alt="Piano key"
-        onContextMenu={(event) => {
-          event.preventDefault();
-        }}
-        src={image}
-        style={styles.image}
-      />
+      <img alt="Piano key" src={image} style={styles.image} />
       <span style={styles.label}>{label}</span>
     </div>
   );
