@@ -28,9 +28,7 @@ const styles: { [key: string]: CSSProperties } = {
     width: '100%',
     maxWidth: MAX_PIANO_WIDTH,
     display: 'flex',
-    flexDirection: 'row',
     alignItems: 'flex-start',
-    flexWrap: 'wrap',
   },
 };
 
@@ -72,13 +70,13 @@ export const Piano: FC<PianoProps> = ({
   );
 
   // DERIVED VARIABLES
-  const keysToRender =
-    width > height
-      ? keyBindingNotePairs
-      : [
-          ...keyBindingNotePairs.slice(12),
-          ...keyBindingNotePairs.slice(0, 12),
-        ];
+  const deviceInLandscape = width > height;
+  const keysToRender = deviceInLandscape
+    ? keyBindingNotePairs
+    : [
+        ...keyBindingNotePairs.slice(12),
+        ...keyBindingNotePairs.slice(0, 12),
+      ];
 
   // HANDLERS
   const updateSoundIndexAndPlaySound = useCallback(
@@ -132,7 +130,12 @@ export const Piano: FC<PianoProps> = ({
   }, [stopSound, updateSoundIndexAndPlaySound]);
 
   return (
-    <div style={styles.piano}>
+    <div
+      style={{
+        ...styles.piano,
+        flexWrap: deviceInLandscape ? 'nowrap' : 'wrap',
+      }}
+    >
       {keysToRender.map((entry) => {
         const key = entry[0];
         const note = entry[1] as Note;

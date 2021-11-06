@@ -17,9 +17,8 @@ export const getKeyImage = (
   return image || '';
 };
 
-// Using 99.99999 to avoid percentages going over 100
 export const getBaseKeyWidth = (
   deviceInLandscape: boolean,
 ): number => {
-  return deviceInLandscape ? 99.99999 / 24 : 99.99999 / 12;
+  return deviceInLandscape ? 100 / 24 : 100 / 12;
 };
