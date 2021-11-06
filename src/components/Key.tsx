@@ -14,6 +14,9 @@ const styles: { [key: string]: CSSProperties } = {
     cursor: 'pointer',
     position: 'relative',
     WebkitTapHighlightColor: 'transparent',
+    // Disgusting hack to fix wrapping issue on some mobile devices
+    marginLeft: -1,
+    marginRight: -1,
   },
   accidental: {
     zIndex: 1,

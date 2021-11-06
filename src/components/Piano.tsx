@@ -28,6 +28,7 @@ const styles: { [key: string]: CSSProperties } = {
     width: '100%',
     maxWidth: MAX_PIANO_WIDTH,
     display: 'flex',
+    justifyContent: 'center',
     alignItems: 'flex-start',
   },
 };
