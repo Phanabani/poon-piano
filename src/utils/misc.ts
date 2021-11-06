@@ -22,3 +22,12 @@ export const getBaseKeyWidth = (
 ): number => {
   return deviceInLandscape ? 100 / 24 : 100 / 12;
 };
+
+/**
+ * Not particularly accurate but worst case scenario is some desktop
+ * users with smaller screens don't see key labels.
+ * Piano component re-renders when screen size changes so no need to
+ * make this a hook as it's only used in Key component.
+ */
+export const isMobileDevice = (): boolean =>
+  window.matchMedia('only screen and (max-width: 1280px)').matches;

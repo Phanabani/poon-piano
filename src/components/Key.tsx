@@ -6,6 +6,8 @@ import React, { CSSProperties, FC } from 'react';
 import { Note } from '../constants';
 // Hooks
 import { useKeyMarginLeft, useKeyWidth } from 'hooks';
+// Utility functions
+import { isMobileDevice } from 'utils';
 
 const styles: { [key: string]: CSSProperties } = {
   key: {
@@ -88,7 +90,7 @@ export const Key: FC<KeyProps> = ({
       style={combinedStyles}
     >
       <img alt="Piano key" src={image} style={styles.image} />
-      <span style={styles.label}>{label}</span>
+      {!isMobileDevice() && <span style={styles.label}>{label}</span>}
     </div>
   );
 };
