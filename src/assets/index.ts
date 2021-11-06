@@ -9,7 +9,7 @@ interface ThemeToModules {
 
 export const THEME_TO_NOTE_MODULES: ThemeToModules = {
   sharky: importAll(
-    require.context('./sharky/notes', false, /\.ogg$/),
+    require.context('./sharky/notes', false, /\.mp3$/),
   ),
 };
 
