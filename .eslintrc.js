@@ -21,6 +21,7 @@ module.exports = {
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
     'lines-between-class-members': 'off',
+    'new-cap': 'off',
   },
   settings: {
     'import/resolver': {
