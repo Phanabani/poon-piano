@@ -2,13 +2,34 @@
   box-sizing: border-box;
 }
 
+@font-face {
+  font-family: 'BadaBoom BB';
+  src: local('BadaBoom BB'), url(./fonts/BadaBoom.ttf) format('truetype');
+}
+
 html, body, #root {
   height: 100%
 }
 
+html {
+  font-size: 10px;
+}
+
 body {
   margin: 0;
-  font-family: Helvetica, sans-serif;
+  font-family: 'BadaBoom BB', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+body, button {
+  font-size: 3rem;
+}
+
+button {
+  padding: 8px 16px;
+  font-family: inherit;
+  border-radius: 12px;
+  cursor: pointer;
+  text-transform: uppercase;
 }

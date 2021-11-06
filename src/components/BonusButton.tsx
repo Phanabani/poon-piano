@@ -9,15 +9,10 @@ import { NoteToSounds } from 'utils';
 
 const styles: { [key: string]: CSSProperties } = {
   bonusButton: {
-    backgroundColor: '#40b9eb',
+    backgroundColor: '#40b9eb', // TODO: Change based on theme
     color: 'white',
-    marginTop: '16px',
-    padding: '8px 16px',
-    fontFamily: 'inherit',
     border: '1px solid white',
-    borderRadius: '16px',
-    cursor: 'pointer',
-    textTransform: 'uppercase',
+    marginTop: '16px',
   },
 };
 
@@ -36,7 +31,6 @@ export const BonusButton: FC<BonusButtonProps> = ({
     noteToSounds.other.play(true);
   };
 
-  // TODO: Colour scheme for button based on theme
   return (
     <button
       onClick={onClick}

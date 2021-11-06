@@ -13,11 +13,12 @@ import {
   THEME_TO_NOTE_MODULES,
 } from 'assets';
 // Components
-import { BonusButton, Piano } from '.';
+import { BonusButton, Piano, StartButton } from '.';
 // Context
 import { ThemeContext } from 'context';
 // Utility functions
 import {
+  audioContext,
   NoteToSounds,
   processFilesIntoSounds,
   processImageModules,
@@ -40,7 +41,8 @@ const styles: { [key: string]: CSSProperties } = {
 
 export const App: VoidFunctionComponent = () => {
   // LOCAL STATE
-  const [loading, setLoading] = useState(true);
+  const [startButtonShowing, showStartButton] = useState(true);
+  const [audioDecoding, setAudioDecoding] = useState(true);
   // TODO: Allow user to select theme
   const [theme /* setTheme */] = useState('sharky');
   const [images, setImages] = useState<ThemeImages>({
@@ -65,16 +67,16 @@ export const App: VoidFunctionComponent = () => {
       (nextNoteToSounds) => {
         setImages(imageFiles);
         setNoteToSounds(nextNoteToSounds);
-        setLoading(false);
+        setAudioDecoding(false);
       },
     );
   }, [theme]);
 
-  // CONDITIONAL RENDERING
-  // TODO: Loading spinner?
-  if (loading) {
-    return null;
-  }
+  // HANDLERS
+  const onStartClick = () => {
+    audioContext.resume();
+    showStartButton(false);
+  };
 
   return (
     <ThemeContext.Provider value={theme}>
@@ -82,10 +84,21 @@ export const App: VoidFunctionComponent = () => {
         style={{
           ...styles.app,
           backgroundImage: `url(${images.background})`,
+          justifyContent: startButtonShowing
+            ? 'center'
+            : 'flex-start',
         }}
       >
-        <Piano noteToSounds={noteToSounds} keyImages={images.keys} />
-        <BonusButton noteToSounds={noteToSounds} />
+        {startButtonShowing && <StartButton onClick={onStartClick} />}
+        {!startButtonShowing && !audioDecoding && (
+          <>
+            <Piano
+              noteToSounds={noteToSounds}
+              keyImages={images.keys}
+            />
+            <BonusButton noteToSounds={noteToSounds} />
+          </>
+        )}
       </div>
     </ThemeContext.Provider>
   );

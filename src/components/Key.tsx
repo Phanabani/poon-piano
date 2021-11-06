@@ -23,7 +23,7 @@ const styles: { [key: string]: CSSProperties } = {
     bottom: 0,
     left: '50%',
     transform: 'translateX(-50%)',
-    padding: '3px',
+    padding: '4px 8px',
     borderRadius: '50%',
     userSelect: 'none',
     MozUserSelect: 'none',

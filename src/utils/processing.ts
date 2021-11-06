@@ -92,7 +92,7 @@ export const processNoteModules = (
   }, {});
 };
 
-const audioContext = new (window.AudioContext ||
+export const audioContext = new (window.AudioContext ||
   window.webkitAudioContext)();
 
 const getBufferFromFile = (file: string): Promise<AudioBuffer> =>
