@@ -30,16 +30,8 @@ const styles: { [key: string]: CSSProperties } = {
     transform: 'translateX(-50%)',
     padding: '4px 8px',
     borderRadius: '50%',
-    userSelect: 'none',
-    MozUserSelect: 'none',
-    WebkitUserSelect: 'none',
-    WebkitTouchCallout: 'none',
   },
   image: {
-    userSelect: 'none',
-    MozUserSelect: 'none',
-    WebkitUserSelect: 'none',
-    WebkitTouchCallout: 'none',
     pointerEvents: 'none',
   },
 };
