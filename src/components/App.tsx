@@ -33,8 +33,7 @@ const styles: { [key: string]: CSSProperties } = {
     backgroundPosition: 'center',
     backgroundSize: 'cover',
     display: 'flex',
-    flexDirection: 'column',
-    flexWrap: 'nowrap',
+    flexFlow: 'column nowrap',
     alignItems: 'center',
   },
 };

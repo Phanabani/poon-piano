@@ -17,7 +17,7 @@ import {
   Note,
 } from '../constants';
 // Hooks
-import { useScreenSize } from 'hooks';
+import { useWindowSize } from 'hooks';
 // Utility functions
 import { getKeyImage, KeyImage, NoteToSounds } from 'utils';
 
@@ -43,7 +43,7 @@ export const Piano: FC<PianoProps> = ({
   keyImages,
 }) => {
   // HOOKS
-  const { width, height } = useScreenSize();
+  const { width, height } = useWindowSize();
 
   // LOCAL STATE
   const [notesPlaying, setNotesPlaying] = useReducer(

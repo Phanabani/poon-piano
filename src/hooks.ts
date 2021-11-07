@@ -7,24 +7,24 @@ import { Note, NOTES } from './constants';
 // Utility functions
 import { getBaseKeyWidth } from 'utils';
 
-interface ScreenSize {
+interface WindowSize {
   width: number;
   height: number;
 }
 
-export const useScreenSize = () => {
+export const useWindowSize = () => {
   // LOCAL STATE
-  const [screenSize, setScreenSize] = useState<ScreenSize>({
-    width: window.screen.availWidth,
-    height: window.screen.availHeight,
+  const [windowSize, setWindowSize] = useState<WindowSize>({
+    width: window.innerWidth,
+    height: window.innerHeight,
   });
 
   // EFFECTS
   useEffect(() => {
     const handleResize = () => {
-      setScreenSize({
-        width: window.screen.availWidth,
-        height: window.screen.availHeight,
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
       });
     };
 
@@ -36,12 +36,12 @@ export const useScreenSize = () => {
     };
   }, []);
 
-  return screenSize;
+  return windowSize;
 };
 
 export const useKeyWidth = (note: Note): string => {
   // HOOKS
-  const { width, height } = useScreenSize();
+  const { width, height } = useWindowSize();
 
   const baseKeyWidth = getBaseKeyWidth(width > height);
   return note.includes('sharp')
@@ -51,7 +51,7 @@ export const useKeyWidth = (note: Note): string => {
 
 export const useKeyMarginLeft = (note: Note): string => {
   // HOOKS
-  const { width, height } = useScreenSize();
+  const { width, height } = useWindowSize();
 
   const baseKeyWidth = getBaseKeyWidth(width > height);
 
