@@ -63,10 +63,9 @@ export interface NoteToNoteFiles {
 }
 
 export const processNoteModules = (
-  theme: string,
   modules: Module[],
-): NoteToNoteFiles => {
-  return modules.reduce<NoteToNoteFiles>((previousValue, module) => {
+): NoteToNoteFiles =>
+  modules.reduce<NoteToNoteFiles>((previousValue, module) => {
     const { default: path } = module;
     const filePathSplit = path.split('/');
     const fileName = filePathSplit[filePathSplit.length - 1];
@@ -90,19 +89,18 @@ export const processNoteModules = (
     previousValue[note].push(path);
     return previousValue;
   }, {});
-};
 
-export const audioContext = new (window.AudioContext ||
-  window.webkitAudioContext)();
-
-const getBufferFromFile = (file: string): Promise<AudioBuffer> =>
+const getBufferFromFile = (
+  context: AudioContext,
+  file: string,
+): Promise<AudioBuffer> =>
   new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     xhr.open('GET', file, true);
     xhr.responseType = 'arraybuffer';
 
     xhr.onload = () => {
-      audioContext.decodeAudioData(
+      context.decodeAudioData(
         xhr.response,
         (buffer) => {
           resolve(buffer);
@@ -119,11 +117,12 @@ const getBufferFromFile = (file: string): Promise<AudioBuffer> =>
   });
 
 const getBuffersFromFiles = (
+  context: AudioContext,
   files: string[],
 ): Promise<AudioBuffer[]> => {
   const promiseArr: Promise<AudioBuffer>[] = [];
   files.forEach((file) => {
-    promiseArr.push(getBufferFromFile(file));
+    promiseArr.push(getBufferFromFile(context, file));
   });
 
   return Promise.all(promiseArr);
@@ -134,18 +133,21 @@ export interface NoteToSounds {
 }
 
 export const processFilesIntoSounds = async (
+  context: AudioContext,
   noteToNoteFiles: NoteToNoteFiles,
 ): Promise<NoteToSounds> => {
   const promiseArr: Promise<AudioBuffer[]>[] = [];
   const notes = Object.keys(noteToNoteFiles);
   notes.forEach((note) => {
-    promiseArr.push(getBuffersFromFiles(noteToNoteFiles[note]));
+    promiseArr.push(
+      getBuffersFromFiles(context, noteToNoteFiles[note]),
+    );
   });
 
   const audioBufferArray = await Promise.all(promiseArr);
   return audioBufferArray.reduce<NoteToSounds>(
     (noteToSounds, buffers, index) => {
-      noteToSounds[notes[index]] = new Sounds(audioContext, buffers);
+      noteToSounds[notes[index]] = new Sounds(context, buffers);
       return noteToSounds;
     },
     {},
