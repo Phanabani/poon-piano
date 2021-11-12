@@ -140,7 +140,7 @@ export const Piano: FC<PianoProps> = ({
       {keysToRender.map((entry) => {
         const key = entry[0];
         const note = entry[1];
-        const isAccidentalNote = note.includes('sharp');
+        const isAccidentalNote = note.includes('s');
         const isNotePlaying = notesPlaying.includes(note);
 
         return (
@@ -148,7 +148,7 @@ export const Piano: FC<PianoProps> = ({
             key={note}
             label={key}
             note={note}
-            isAccidental={note.includes('sharp')}
+            isAccidental={note.includes('s')}
             eventHandlers={{
               onMouseDown: () => {
                 updateSoundIndexAndPlaySound(note);

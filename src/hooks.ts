@@ -44,7 +44,7 @@ export const useKeyWidth = (note: Note): string => {
   const { width, height } = useWindowSize();
 
   const baseKeyWidth = getBaseKeyWidth(width > height);
-  return note.includes('sharp')
+  return note.includes('s')
     ? `${baseKeyWidth}%`
     : `${(baseKeyWidth * 12) / 7}%`;
 };
@@ -56,7 +56,7 @@ export const useKeyMarginLeft = (note: Note): string => {
   const baseKeyWidth = getBaseKeyWidth(width > height);
 
   let marginLeft = 0;
-  if (note.includes('sharp')) {
+  if (note.includes('s')) {
     marginLeft = -0.5 * baseKeyWidth;
   } else {
     // We need to move some non-accidental keys to the left as the accidental keys hover on top
@@ -64,7 +64,7 @@ export const useKeyMarginLeft = (note: Note): string => {
       NOTES[
         NOTES.findIndex((noteIteration) => noteIteration === note) - 1
       ];
-    if (previousNote?.includes('sharp')) {
+    if (previousNote?.includes('s')) {
       marginLeft = -0.5 * baseKeyWidth;
     }
   }
