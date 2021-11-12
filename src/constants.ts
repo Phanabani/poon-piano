@@ -59,3 +59,5 @@ export const KEY_BINDING_TO_NOTE = new Map<string, Note>([
 ]);
 
 export const MAX_PIANO_WIDTH = 1280;
+
+export const VOLUME_FADE_TIME = 0.05;
