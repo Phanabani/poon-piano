@@ -13,7 +13,14 @@ import {
   THEME_TO_NOTE_MODULES,
 } from 'assets';
 // Components
-import { BonusButton, Piano, StartButton } from '.';
+import { BonusButton, KeyBindingModal, Piano, StartButton } from '.';
+// Constants
+import {
+  MAX_PIANO_WIDTH,
+  Note,
+  NOTE_TO_KEY_BINDING_PRESET_1,
+  NoteToKeyBinding,
+} from '../constants';
 // Context
 import { ThemeContext } from 'context';
 // Utility functions
@@ -35,6 +42,14 @@ const styles: { [key: string]: CSSProperties } = {
     flexFlow: 'column nowrap',
     alignItems: 'center',
   },
+  buttonContainer: {
+    width: '100%',
+    maxWidth: MAX_PIANO_WIDTH,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: '16px',
+  },
 };
 
 let audioContext: AudioContext;
@@ -49,6 +64,8 @@ export const App: VoidFunctionComponent = () => {
     keys: [],
   });
   const [noteToSounds, setNoteToSounds] = useState<NoteToSounds>({});
+  const [noteToKeyBinding, setNoteToKeyBinding] =
+    useState<NoteToKeyBinding>(NOTE_TO_KEY_BINDING_PRESET_1);
 
   // EFFECTS
   useEffect(() => {
@@ -58,6 +75,14 @@ export const App: VoidFunctionComponent = () => {
     );
     setImages(imageFiles);
   }, [theme]);
+
+  useEffect(() => {
+    // Restore user's saved key bindings
+    const savedKeyBindings = localStorage.getItem('keyBindings');
+    if (savedKeyBindings) {
+      setNoteToKeyBinding(JSON.parse(savedKeyBindings));
+    }
+  }, []);
 
   // HANDLERS
   const onStartClick = () => {
@@ -85,6 +110,21 @@ export const App: VoidFunctionComponent = () => {
     );
   };
 
+  const onKeyBindingChange = (note: Note, key: string) => {
+    const nextNoteToKeyBinding = {
+      ...noteToKeyBinding,
+      [note]: key,
+    };
+
+    setNoteToKeyBinding(nextNoteToKeyBinding);
+
+    // Update saved key bindings
+    localStorage.setItem(
+      'keyBindings',
+      JSON.stringify(nextNoteToKeyBinding),
+    );
+  };
+
   return (
     <ThemeContext.Provider value={theme}>
       <div
@@ -103,8 +143,15 @@ export const App: VoidFunctionComponent = () => {
               <Piano
                 noteToSounds={noteToSounds}
                 keyImages={images.keys}
+                noteToKeyBinding={noteToKeyBinding}
               />
-              <BonusButton noteToSounds={noteToSounds} />
+              <div style={styles.buttonContainer}>
+                <BonusButton noteToSounds={noteToSounds} />
+                <KeyBindingModal
+                  noteToKeyBinding={noteToKeyBinding}
+                  onChange={onKeyBindingChange}
+                />
+              </div>
             </>
           )}
       </div>

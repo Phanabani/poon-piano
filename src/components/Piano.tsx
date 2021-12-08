@@ -12,16 +12,15 @@ import React, {
 import { Key } from '.';
 // Constants
 import {
-  KEY_BINDING_TO_NOTE,
   MAX_PIANO_WIDTH,
   Note,
+  NoteToKeyBinding,
+  NOTES,
 } from '../constants';
 // Hooks
 import { useWindowSize } from 'hooks';
 // Utility functions
 import { getKeyImage, KeyImage, NoteToSounds } from 'utils';
-
-const keyBindingNotePairs = [...KEY_BINDING_TO_NOTE.entries()];
 
 const styles: { [key: string]: CSSProperties } = {
   piano: {
@@ -36,11 +35,13 @@ const styles: { [key: string]: CSSProperties } = {
 interface PianoProps {
   noteToSounds: NoteToSounds;
   keyImages: KeyImage[];
+  noteToKeyBinding: NoteToKeyBinding;
 }
 
 export const Piano: FC<PianoProps> = ({
   noteToSounds,
   keyImages,
+  noteToKeyBinding,
 }) => {
   // HOOKS
   const { width, height } = useWindowSize();
@@ -72,12 +73,9 @@ export const Piano: FC<PianoProps> = ({
 
   // DERIVED VARIABLES
   const deviceInLandscape = width > height;
-  const keysToRender = deviceInLandscape
-    ? keyBindingNotePairs
-    : [
-        ...keyBindingNotePairs.slice(12),
-        ...keyBindingNotePairs.slice(0, 12),
-      ];
+  const notesToRender = deviceInLandscape
+    ? NOTES
+    : [...NOTES.slice(12), ...NOTES.slice(0, 12)];
 
   // HANDLERS
   const updateSoundIndexAndPlaySound = useCallback(
@@ -108,16 +106,24 @@ export const Piano: FC<PianoProps> = ({
   // Listen for key events in window
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      const note = KEY_BINDING_TO_NOTE.get(event.key.toUpperCase());
-      if (!event.repeat && note) {
-        updateSoundIndexAndPlaySound(note);
+      const { key } = event;
+      const playedNote = (
+        Object.keys(noteToKeyBinding) as Note[]
+      ).find((note) => noteToKeyBinding[note] === key);
+
+      if (!event.repeat && playedNote) {
+        updateSoundIndexAndPlaySound(playedNote);
       }
     };
 
     const handleKeyUp = (event: KeyboardEvent) => {
-      const note = KEY_BINDING_TO_NOTE.get(event.key.toUpperCase());
-      if (!event.repeat && note) {
-        stopSound(note);
+      const { key } = event;
+      const playedNote = (
+        Object.keys(noteToKeyBinding) as Note[]
+      ).find((note) => noteToKeyBinding[note] === key);
+
+      if (!event.repeat && playedNote) {
+        stopSound(playedNote);
       }
     };
 
@@ -128,7 +134,7 @@ export const Piano: FC<PianoProps> = ({
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [stopSound, updateSoundIndexAndPlaySound]);
+  }, [noteToKeyBinding, stopSound, updateSoundIndexAndPlaySound]);
 
   return (
     <div
@@ -137,9 +143,8 @@ export const Piano: FC<PianoProps> = ({
         flexWrap: deviceInLandscape ? 'nowrap' : 'wrap',
       }}
     >
-      {keysToRender.map((entry) => {
-        const key = entry[0];
-        const note = entry[1];
+      {notesToRender.map((note) => {
+        const key = noteToKeyBinding[note];
         const isAccidentalNote = note.includes('s');
         const isNotePlaying = notesPlaying.includes(note);
 

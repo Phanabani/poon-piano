@@ -12,7 +12,6 @@ const styles: { [key: string]: CSSProperties } = {
     backgroundColor: '#40b9eb', // TODO: Change based on theme
     color: 'white',
     border: '1px solid white',
-    margin: '16px 0',
   },
 };
 
